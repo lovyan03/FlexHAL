@@ -1,48 +1,84 @@
-# Product Name
+# FlexHAL
 
-## Overview
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Arduino Library](https://img.shields.io/badge/Arduino-Library-blue)](https://www.arduino.cc/reference/en/libraries/)
 
-### SKU:xxx
+FlexHALは柔軟なハードウェア抽象化レイヤー（HAL）ライブラリです。ESP32やRP2040などのマイコン向けの開発を効率化し、さらにSDLを使用してデスクトップ環境でのエミュレーションも可能にします。
 
-Description of the product
+## 特徴 ✨
 
-## Related Link
+- マルチプラットフォーム対応（ESP32, RP2040, SDL）
+- シンプルで一貫性のあるAPI
+- デスクトップ環境でのエミュレーション機能
+- 豊富なドライバーライブラリ（開発中）
 
-- [Document & Datasheet](https://docs.m5stack.com/en/unit/product_Link)
+## 必要な環境 🛠
 
-## Required Libraries:
+- C++17対応コンパイラ
+- CMake 3.12以上
+- 各プラットフォームに応じた開発環境:
+  - ESP32: ESP-IDF
+  - RP2040: Pico SDK
+  - SDL: SDL2ライブラリ
 
-- [Adafruit_BMP280_Library](https://github.com/adafruit/Required_Libraries_Link)
+## ビルド方法 🔨
 
-## License
+### デスクトップシミュレーション
 
-- [Product Name- MIT](LICENSE)
+```bash
+# SDLライブラリをインストール
+# macOS: brew install sdl2
+# Ubuntu: sudo apt install libsdl2-dev
 
-## Remaining steps(Editorial Staff Look,After following the steps, remember to delete all the content below)
+# ビルドと実行
+chmod +x build.sh
+./build.sh
+./build/main
+```
 
-1. Change [clang format check path](./.github/workflows/clang-format-check.yml#L9-L15).
-2. Add License content to [LICENSE](/LICENSE).
-3. Change link on line 78 of [bug-report.yml](./.github/ISSUE_TEMPLATE/bug-report.yml#L78).
+### Arduino ESP32
+
+Arduino IDEでプロジェクトを開き、ボード設定でESP32を選択してビルドします。
+
+## 使用例 💡
+
+### GPIOの使用例
 
 ```cpp
-Example
-# M5Unit-ENV
+#include <FlexHAL.hpp>
 
-## Overview
+using namespace flexhal;
 
-### SKU:U001 & U001-B & U001-C
+void setup() {
+  // GPIOピンの設定
+  GPIO::getInstance().setPinMode(2, GPIO::PinMode::OUTPUT);
+  
+  // LEDを点灯
+  GPIO::getInstance().digitalWrite(2, GPIO::PinState::HIGH);
+}
 
-Contains M5Stack-**UNIT ENV** series related case programs.ENV is an environmental sensor with integrated SHT30 and QMP6988 internally to detect temperature, humidity, and atmospheric pressure data.
-
-## Related Link
-
-- [Document & Datasheet](https://docs.m5stack.com/en/unit/envIII)
-
-## Required Libraries:
-
-- [Adafruit_BMP280_Library](https://github.com/adafruit/Adafruit_BMP280_Library)
-
-## License
-
-- [M5Unit-ENV - MIT](LICENSE)
+void loop() {
+  // LEDを点滅
+  GPIO::getInstance().digitalWrite(2, GPIO::PinState::HIGH);
+  delay(500);
+  GPIO::getInstance().digitalWrite(2, GPIO::PinState::LOW);
+  delay(500);
+}
 ```
+
+## エントリーポイント方式について 🔗
+
+FlexHALは「エントリーポイント方式」を採用しています。これにより、Arduino IDEでのビルドとデスクトップシミュレーションの両方に対応しています。
+
+- **src/FlexHAL_Impl.cpp** - メインのエントリーポイントファイル
+- **impl/*/impl_includes.h** - 各環境ごとの実装ファイルをまとめたインクルードファイル
+
+## ライセンス 📜
+
+MIT License
+
+## 貢献について 🤝
+
+バグ報告や機能要望、プルリクエストは大歓迎です！
+
+[Issues](https://github.com/lovyan03/FlexHAL/issues)や[Pull Requests](https://github.com/lovyan03/FlexHAL/pulls)をお待ちしています。

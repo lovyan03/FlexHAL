@@ -1,0 +1,42 @@
+{
+  "name": "FlexHAL",
+  "version": "0.1.0",
+  "description": "Hardware Abstraction Layer for multiple platforms",
+  "keywords": "hal, hardware, abstraction, esp32, avr, rp2040, simulation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lovyan03/FlexHAL"
+  },
+  "authors": [
+    {
+      "name": "lovyan03",
+      "email": "42724151+lovyan03@users.noreply.github.com",
+      "url": "https://github.com/lovyan03",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/lovyan03/FlexHAL",
+  "frameworks": ["arduino", "espidf"],
+  "platforms": ["espressif32", "atmelavr", "raspberrypi"],
+  "build": {
+    "srcDir": "src",
+    "includeDir": ["src", "include"],
+    "srcFilter": [
+      "+<**/*.cpp>",
+      "+<**/*.c>"
+    ]
+  },
+  "export": {
+    "include": [
+      "src/*",
+      "include/*",
+      "impl/**/*",
+      "examples/**/*",
+      "library.json",
+      "library.properties",
+      "LICENSE",
+      "README.md"
+    ]
+  }
+}
