@@ -10,11 +10,11 @@
 
 // FlexHALライブラリをインクルード
 #if __has_include("FlexHAL.hpp")
-  // PlatformIOビルド用
-  #include "FlexHAL.hpp"
+// PlatformIOビルド用
+#include "FlexHAL.hpp"
 #else
-  // Arduino IDEビルド用
-  #include "../../src/FlexHAL.hpp"
+// Arduino IDEビルド用
+#include "../../src/FlexHAL.hpp"
 #endif
 
 // LEDのピン番号

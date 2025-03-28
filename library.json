@@ -21,7 +21,8 @@
   "platforms": ["espressif32", "atmelavr", "raspberrypi"],
   "build": {
     "srcDir": "src",
-    "includeDir": ["src", "include"],
+    "includeDir": "src",
+    "includePath": ["src", "impl"],
     "srcFilter": [
       "+<**/*.cpp>",
       "+<**/*.c>"
