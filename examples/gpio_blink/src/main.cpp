@@ -9,11 +9,11 @@
  */
 
 #if __has_include("FlexHAL.hpp")
-  // PlatformIOビルド用
-  #include "FlexHAL.hpp"
+// PlatformIOビルド用
+#include "FlexHAL.hpp"
 #else
-  // 直接ビルド用
-  #include "../../src/FlexHAL.hpp"
+// 直接ビルド用
+#include "../../src/FlexHAL.hpp"
 #endif
 #include <iostream>
 #include <chrono>
