@@ -31,6 +31,14 @@
 #endif
 
 //=============================================================================
+// フレームワーク層の実装
+//=============================================================================
+#if defined(FLEXHAL_PLATFORM_DESKTOP) || defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || \
+    defined(FLEXHAL_PLATFORM_LINUX)
+#include "../impl/frameworks/sdl/impl_includes.h"
+#endif
+
+//=============================================================================
 // RTOSレイヤー向け実装
 //=============================================================================
 #if defined(FLEXHAL_RTOS_FREERTOS)

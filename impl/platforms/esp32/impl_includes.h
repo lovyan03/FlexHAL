@@ -11,9 +11,9 @@
 #pragma once
 
 // ESP32プラットフォーム向け実装ファイルをインクルード
-#include "gpio.cpp"
-#include "core.cpp"
-#include "factory.cpp"
+#include "gpio.inl"
+#include "core.inl"
+#include "factory.inl"
 
 // 将来的に追加される実装ファイルもここに追加
 // #include "spi.cpp"

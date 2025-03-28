@@ -11,9 +11,9 @@
 #pragma once
 
 // デスクトップシミュレーション向け実装ファイルをインクルード
-#include "core.cpp"
-#include "factory.cpp"
-#include "gpio.cpp"
+#include "core.inl"
+#include "factory.inl"
+#include "gpio.inl"
 
 // 将来的に追加される実装ファイルもここに追加
 // #include "spi.cpp"

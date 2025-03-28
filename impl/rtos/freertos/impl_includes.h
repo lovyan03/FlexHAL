@@ -11,7 +11,7 @@
 #pragma once
 
 // FreeRTOS向け実装ファイルをインクルード
-#include "factory.cpp"
+#include "factory.inl"
 
 // 将来的に追加される実装ファイルもここに追加
 // #include "semaphore.cpp"
