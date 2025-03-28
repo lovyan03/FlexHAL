@@ -25,7 +25,7 @@
 #elif defined(FLEXHAL_PLATFORM_RP2040)
   // RP2040向け実装をインクルード
   // #include "../impl/platforms/rp2040/impl_includes.h"
-#elif defined(FLEXHAL_PLATFORM_DESKTOP)
+#elif defined(FLEXHAL_PLATFORM_DESKTOP) || defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || defined(FLEXHAL_PLATFORM_LINUX)
   #include "../impl/platforms/desktop/impl_includes.h"
 #endif
 
@@ -39,7 +39,7 @@
 #elif defined(FLEXHAL_RTOS_ZEPHYR)
   // Zephyr向け実装をインクルード
   // #include "../impl/rtos/zephyr/impl_includes.h"
-#elif defined(FLEXHAL_PLATFORM_DESKTOP)
+#elif defined(FLEXHAL_PLATFORM_DESKTOP) || defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || defined(FLEXHAL_PLATFORM_LINUX)
   #include "../impl/rtos/sdl/impl_includes.h"
 #else
   #include "../impl/rtos/noos/impl_includes.h"

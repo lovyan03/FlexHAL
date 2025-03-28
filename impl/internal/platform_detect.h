@@ -28,8 +28,23 @@
   #define FLEXHAL_PLATFORM_STM32
 #elif defined(__EMSCRIPTEN__)
   #define FLEXHAL_PLATFORM_EMSCRIPTEN
+#elif defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__WINDOWS__)
+  #define FLEXHAL_PLATFORM_WINDOWS
+#elif defined(__APPLE__)
+  #define FLEXHAL_PLATFORM_MACOS
+#elif defined(__linux__)
+  #define FLEXHAL_PLATFORM_LINUX
 #else
   #define FLEXHAL_PLATFORM_UNKNOWN
+#endif
+
+// デスクトップ環境の検出（SDL2サポート）
+#if defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || defined(FLEXHAL_PLATFORM_LINUX)
+  #if defined(FLEXHAL_PLATFORM_DESKTOP)
+    // すでに定義済み
+  #elif __has_include(<SDL2/SDL.h>) || __has_include(<SDL.h>)
+    #define FLEXHAL_PLATFORM_DESKTOP
+  #endif
 #endif
 
 //=============================================================================
