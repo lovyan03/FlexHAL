@@ -1,5 +1,6 @@
 #pragma once
 
+// Display interface for graphics operations
 #include <cstdint>
 #include <memory>
 

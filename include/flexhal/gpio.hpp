@@ -1,5 +1,6 @@
 #pragma once
 
+// GPIO interface for Arduino-like API
 #include <cstdint>
 
 namespace flexhal {
