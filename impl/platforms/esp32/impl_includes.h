@@ -3,9 +3,9 @@
  * @brief FlexHAL - ESP32プラットフォーム向け実装ファイルのインクルード
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #pragma once

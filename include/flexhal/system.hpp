@@ -12,36 +12,40 @@ uint32_t micros();
 
 // システム関連の便利機能
 namespace System {
-    // 初期化＆終了
-    bool begin();
-    void end();
+// 初期化＆終了
+bool begin();
+void end();
 
-    // CPU周波数の設定
-    bool setCpuFrequency(uint32_t freq_mhz);
-    uint32_t getCpuFrequency();
+// CPU周波数の設定
+bool setCpuFrequency(uint32_t freq_mhz);
+uint32_t getCpuFrequency();
 
-    // メモリ情報
-    size_t getFreeHeap();
-    size_t getMaxAllocHeap();
+// メモリ情報
+size_t getFreeHeap();
+size_t getMaxAllocHeap();
 
-    // 再起動
-    void restart();
+// 再起動
+void restart();
 
-    // プラットフォーム情報
-    const char* getPlatformName();
-    const char* getSDKVersion();
-}
+// プラットフォーム情報
+const char* getPlatformName();
+const char* getSDKVersion();
+}  // namespace System
 
 // タイマークラス（便利だよね！）
 class Timer {
 public:
-    Timer() : m_start(std::chrono::steady_clock::now()) {}
+    Timer() : m_start(std::chrono::steady_clock::now())
+    {
+    }
 
-    void reset() {
+    void reset()
+    {
         m_start = std::chrono::steady_clock::now();
     }
 
-    uint32_t elapsed() const {
+    uint32_t elapsed() const
+    {
         auto now = std::chrono::steady_clock::now();
         return std::chrono::duration_cast<std::chrono::milliseconds>(now - m_start).count();
     }
@@ -50,4 +54,4 @@ private:
     std::chrono::steady_clock::time_point m_start;
 };
 
-} // namespace flexhal
+}  // namespace flexhal

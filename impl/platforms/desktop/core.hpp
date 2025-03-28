@@ -3,9 +3,9 @@
  * @brief FlexHAL - デスクトップ向けコア機能
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #ifndef FLEXHAL_IMPL_PLATFORMS_DESKTOP_CORE_HPP
@@ -28,14 +28,14 @@ class DesktopSimulation {
 public:
     /**
      * @brief シングルトンインスタンスを取得
-     * 
+     *
      * @return DesktopSimulation& シングルトンインスタンス
      */
     static DesktopSimulation& getInstance();
 
     /**
      * @brief シミュレーション環境を初期化
-     * 
+     *
      * @return true 初期化成功
      * @return false 初期化失敗
      */
@@ -48,14 +48,14 @@ public:
 
     /**
      * @brief GPIOポートを取得
-     * 
+     *
      * @return std::shared_ptr<SimulatedGPIOPort> GPIOポート
      */
     std::shared_ptr<SimulatedGPIOPort> getGPIOPort();
 
     /**
      * @brief シミュレーションの更新処理
-     * 
+     *
      * @return true 継続
      * @return false 終了要求
      */
@@ -92,8 +92,8 @@ private:
     std::unique_ptr<std::thread> update_thread_;
 };
 
-} // namespace desktop
-} // namespace platform
-} // namespace flexhal
+}  // namespace desktop
+}  // namespace platform
+}  // namespace flexhal
 
-#endif // FLEXHAL_IMPL_PLATFORMS_DESKTOP_CORE_HPP
+#endif  // FLEXHAL_IMPL_PLATFORMS_DESKTOP_CORE_HPP

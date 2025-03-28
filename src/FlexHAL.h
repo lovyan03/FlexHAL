@@ -3,9 +3,9 @@
  * @brief FlexHAL - 柔軟なハードウェア抽象化レイヤー (C/C++共通ヘッダ)
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #ifndef FLEXHAL_H
@@ -25,7 +25,7 @@ extern "C" {
 
 /**
  * @brief FlexHALライブラリの初期化 (C言語インターフェース)
- * 
+ *
  * @return 1: 成功, 0: 失敗
  */
 int flexhal_init(void);
@@ -55,4 +55,4 @@ int flexhal_i2c_read(int address, void* data, int length);
 }
 #endif
 
-#endif // FLEXHAL_H
+#endif  // FLEXHAL_H

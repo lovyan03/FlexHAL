@@ -3,9 +3,9 @@
  * @brief FlexHAL - デスクトップ向けファクトリ実装
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #include "../../../src/flexhal/gpio.hpp"
@@ -16,43 +16,48 @@
 namespace flexhal {
 
 // デスクトップシミュレーション環境のGPIOポートを取得
-std::shared_ptr<IGPIOPort> getDefaultGPIOPort() {
+std::shared_ptr<IGPIOPort> getDefaultGPIOPort()
+{
     auto& simulation = platform::desktop::DesktopSimulation::getInstance();
-    
+
     // 初期化されていなければ初期化
     if (!simulation.init()) {
         return nullptr;
     }
-    
+
     return simulation.getGPIOPort();
 }
 
 // 指定したピン番号のピンを取得
-std::shared_ptr<IPin> getPin(int pin_number) {
+std::shared_ptr<IPin> getPin(int pin_number)
+{
     auto port = getDefaultGPIOPort();
     if (!port) {
         return nullptr;
     }
-    
+
     return port->getPin(pin_number);
 }
 
 // ライブラリの初期化
-bool init() {
+bool init()
+{
     auto& simulation = platform::desktop::DesktopSimulation::getInstance();
     return simulation.init();
 }
 
 // ライブラリの終了処理
-void end() {
+void end()
+{
     auto& simulation = platform::desktop::DesktopSimulation::getInstance();
     simulation.end();
 }
 
 // ライブラリの更新処理
-bool update() {
+bool update()
+{
     auto& simulation = platform::desktop::DesktopSimulation::getInstance();
     return simulation.update();
 }
 
-} // namespace flexhal
+}  // namespace flexhal

@@ -3,9 +3,9 @@
  * @brief FlexHAL - 柔軟なハードウェア抽象化レイヤー (C++版)
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #ifndef FLEXHAL_HPP
@@ -28,7 +28,7 @@
 using flexhal::Version;
 
 // 初期化/終了処理関数をグローバル名前空間にエクスポート
-using flexhal::init;
 using flexhal::end;
+using flexhal::init;
 
-#endif // FLEXHAL_HPP
+#endif  // FLEXHAL_HPP

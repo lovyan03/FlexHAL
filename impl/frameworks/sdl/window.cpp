@@ -3,9 +3,9 @@
  * @brief FlexHAL - SDLウィンドウ管理の実装
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #include "window.hpp"
@@ -17,12 +17,9 @@ namespace sdl {
 
 // SDLの初期化状態を追跡する静的変数
 static bool sdl_initialized = false;
-static int window_count = 0;
+static int window_count     = 0;
 
-Window::Window(const std::string& title, int width, int height)
-    : window_(nullptr)
-    , renderer_(nullptr)
-    , running_(false)
+Window::Window(const std::string& title, int width, int height) : window_(nullptr), renderer_(nullptr), running_(false)
 {
     // SDLが初期化されていなければ初期化
     if (!sdl_initialized) {
@@ -34,14 +31,8 @@ Window::Window(const std::string& title, int width, int height)
     }
 
     // ウィンドウ作成
-    window_ = SDL_CreateWindow(
-        title.c_str(),
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        width,
-        height,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
-    );
+    window_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height,
+                               SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     if (!window_) {
         std::cerr << "ウィンドウ作成エラー: " << SDL_GetError() << std::endl;
@@ -59,33 +50,37 @@ Window::Window(const std::string& title, int width, int height)
 
     // 背景色を黒に設定
     SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
-    
+
     running_ = true;
     window_count++;
 }
 
-Window::~Window() {
+Window::~Window()
+{
     close();
 }
 
-void Window::show() {
+void Window::show()
+{
     if (window_) {
         SDL_ShowWindow(window_);
     }
 }
 
-void Window::hide() {
+void Window::hide()
+{
     if (window_) {
         SDL_HideWindow(window_);
     }
 }
 
-void Window::close() {
+void Window::close()
+{
     if (renderer_) {
         SDL_DestroyRenderer(renderer_);
         renderer_ = nullptr;
     }
-    
+
     if (window_) {
         SDL_DestroyWindow(window_);
         window_ = nullptr;
@@ -101,7 +96,8 @@ void Window::close() {
     running_ = false;
 }
 
-bool Window::update() {
+bool Window::update()
+{
     if (!running_ || !window_ || !renderer_) {
         return false;
     }
@@ -116,8 +112,7 @@ bool Window::update() {
         }
 
         // ウィンドウ閉じるイベント
-        if (event.type == SDL_WINDOWEVENT && 
-            event.window.event == SDL_WINDOWEVENT_CLOSE && 
+        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
             event.window.windowID == SDL_GetWindowID(window_)) {
             running_ = false;
             return false;
@@ -146,14 +141,16 @@ bool Window::update() {
     return running_;
 }
 
-void Window::addEventCallback(EventCallback callback) {
+void Window::addEventCallback(EventCallback callback)
+{
     eventCallbacks_.push_back(callback);
 }
 
-void Window::addRenderCallback(RenderCallback callback) {
+void Window::addRenderCallback(RenderCallback callback)
+{
     renderCallbacks_.push_back(callback);
 }
 
-} // namespace sdl
-} // namespace framework
-} // namespace flexhal
+}  // namespace sdl
+}  // namespace framework
+}  // namespace flexhal

@@ -3,9 +3,9 @@
  * @brief FlexHAL - デスクトップ向けコア機能の実装
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #include "core.hpp"
@@ -17,25 +17,27 @@ namespace platform {
 namespace desktop {
 
 // シングルトンインスタンス
-DesktopSimulation& DesktopSimulation::getInstance() {
+DesktopSimulation& DesktopSimulation::getInstance()
+{
     static DesktopSimulation instance;
     return instance;
 }
 
-DesktopSimulation::DesktopSimulation()
-    : running_(false)
+DesktopSimulation::DesktopSimulation() : running_(false)
 {
     // GPIOポート作成
     gpio_port_ = std::make_shared<SimulatedGPIOPort>(40, "FlexHAL GPIO Simulator");
 }
 
-DesktopSimulation::~DesktopSimulation() {
+DesktopSimulation::~DesktopSimulation()
+{
     end();
 }
 
-bool DesktopSimulation::init() {
+bool DesktopSimulation::init()
+{
     if (running_.load()) {
-        return true; // 既に初期化済み
+        return true;  // 既に初期化済み
     }
 
     // GPIOウィンドウを表示
@@ -50,9 +52,10 @@ bool DesktopSimulation::init() {
     return true;
 }
 
-void DesktopSimulation::end() {
+void DesktopSimulation::end()
+{
     if (!running_.load()) {
-        return; // 既に終了済み
+        return;  // 既に終了済み
     }
 
     // 実行フラグをオフに
@@ -66,11 +69,13 @@ void DesktopSimulation::end() {
     std::cout << "FlexHAL Desktop Simulation terminated" << std::endl;
 }
 
-std::shared_ptr<SimulatedGPIOPort> DesktopSimulation::getGPIOPort() {
+std::shared_ptr<SimulatedGPIOPort> DesktopSimulation::getGPIOPort()
+{
     return gpio_port_;
 }
 
-bool DesktopSimulation::update() {
+bool DesktopSimulation::update()
+{
     bool result = true;
 
     // GPIOポート更新
@@ -81,14 +86,16 @@ bool DesktopSimulation::update() {
     return result;
 }
 
-void DesktopSimulation::showWindows() {
+void DesktopSimulation::showWindows()
+{
     // GPIOウィンドウを表示
     if (gpio_port_) {
         gpio_port_->showWindow();
     }
 }
 
-void DesktopSimulation::hideWindows() {
+void DesktopSimulation::hideWindows()
+{
     // GPIOウィンドウを非表示
     if (gpio_port_) {
         gpio_port_->hideWindow();
@@ -97,6 +104,6 @@ void DesktopSimulation::hideWindows() {
 
 // メインスレッドから呼び出される更新関数に置き換えたため、updateThreadは不要
 
-} // namespace desktop
-} // namespace platform
-} // namespace flexhal
+}  // namespace desktop
+}  // namespace platform
+}  // namespace flexhal

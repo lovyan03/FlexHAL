@@ -3,9 +3,9 @@
  * @brief ミューテックスインターフェース定義
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #pragma once
@@ -15,13 +15,13 @@
 
 // RTOSに応じた実装を選択
 #if defined(FLEXHAL_RTOS_FREERTOS)
-  #include "../../impl/rtos/freertos/mutex.h"
+#include "../../impl/rtos/freertos/mutex.h"
 #elif defined(FLEXHAL_RTOS_ZEPHYR)
-  #include "../../impl/rtos/zephyr/mutex.h"
+#include "../../impl/rtos/zephyr/mutex.h"
 #elif defined(FLEXHAL_PLATFORM_DESKTOP)
-  #include "../../impl/rtos/sdl/mutex.h"
+#include "../../impl/rtos/sdl/mutex.h"
 #else
-  #include "../../impl/rtos/noos/mutex.h"
+#include "../../impl/rtos/noos/mutex.h"
 #endif
 
 namespace flexhal {
@@ -35,7 +35,7 @@ public:
 
     /**
      * @brief ミューテックスをロック
-     * 
+     *
      * @param timeout_ms タイムアウト時間（ミリ秒）、0は永久待機
      * @return true ロック成功
      * @return false ロック失敗
@@ -49,7 +49,7 @@ public:
 
     /**
      * @brief ミューテックスをトライロック（ブロックなし）
-     * 
+     *
      * @return true ロック成功
      * @return false ロック失敗
      */
@@ -58,18 +58,18 @@ public:
 
 /**
  * @brief ミューテックスロックガード
- * 
+ *
  * スコープベースのミューテックスロック管理
  */
 class MutexLockGuard {
 public:
     /**
      * @brief コンストラクタ
-     * 
+     *
      * @param mutex ロックするミューテックス
      */
-    explicit MutexLockGuard(std::shared_ptr<IMutex> mutex)
-        : mutex_(mutex) {
+    explicit MutexLockGuard(std::shared_ptr<IMutex> mutex) : mutex_(mutex)
+    {
         if (mutex_) {
             locked_ = mutex_->lock();
         }
@@ -78,7 +78,8 @@ public:
     /**
      * @brief デストラクタ
      */
-    ~MutexLockGuard() {
+    ~MutexLockGuard()
+    {
         if (mutex_ && locked_) {
             mutex_->unlock();
         }
@@ -86,11 +87,12 @@ public:
 
     /**
      * @brief ロック成功したか確認
-     * 
+     *
      * @return true ロック成功
      * @return false ロック失敗
      */
-    bool isLocked() const {
+    bool isLocked() const
+    {
         return locked_;
     }
 
@@ -101,9 +103,9 @@ private:
 
 /**
  * @brief ミューテックスを作成
- * 
+ *
  * @return std::shared_ptr<IMutex> 作成したミューテックス
  */
 std::shared_ptr<IMutex> createMutex();
 
-} // namespace flexhal
+}  // namespace flexhal

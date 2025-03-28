@@ -3,9 +3,9 @@
  * @brief FlexHAL - SDL向けタスク実装
  * @version 0.1.0
  * @date 2025-03-28
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #pragma once
@@ -22,12 +22,7 @@ namespace rtos {
 /**
  * @brief タスク優先度
  */
-enum class TaskPriority {
-    Low,
-    Normal,
-    High,
-    Realtime
-};
+enum class TaskPriority { Low, Normal, High, Realtime };
 
 /**
  * @brief SDL_Threadを使用したタスククラス
@@ -36,42 +31,52 @@ class Task {
 public:
     /**
      * @brief コンストラクタ
-     * 
+     *
      * @param name タスク名
      * @param function タスク関数
      * @param priority タスク優先度
      * @param stack_size スタックサイズ
      */
-    Task(const std::string& name, std::function<void()> function, TaskPriority priority = TaskPriority::Normal, size_t stack_size = 4096)
-        : name_(name), function_(function), priority_(priority), stack_size_(stack_size), running_(false), thread_(nullptr) {}
+    Task(const std::string& name, std::function<void()> function, TaskPriority priority = TaskPriority::Normal,
+         size_t stack_size = 4096)
+        : name_(name),
+          function_(function),
+          priority_(priority),
+          stack_size_(stack_size),
+          running_(false),
+          thread_(nullptr)
+    {
+    }
 
     /**
      * @brief デストラクタ
      */
-    ~Task() {
+    ~Task()
+    {
         stop();
     }
 
     /**
      * @brief タスク開始
-     * 
+     *
      * @return true 成功
      * @return false 失敗
      */
-    bool start() {
+    bool start()
+    {
         if (running_) {
             return true;
         }
-        
+
         // スレッド終了フラグをリセット
         should_exit_ = false;
-        
+
         // スレッド作成
         thread_ = SDL_CreateThread(threadFunction, name_.c_str(), this);
         if (!thread_) {
             return false;
         }
-        
+
         running_ = true;
         return true;
     }
@@ -79,44 +84,47 @@ public:
     /**
      * @brief タスク停止
      */
-    void stop() {
+    void stop()
+    {
         if (!running_ || !thread_) {
             return;
         }
-        
+
         // スレッド終了フラグをセット
         should_exit_ = true;
-        
+
         // スレッド終了待ち
         int result;
         SDL_WaitThread(thread_, &result);
-        thread_ = nullptr;
+        thread_  = nullptr;
         running_ = false;
     }
 
     /**
      * @brief タスク実行中かどうか
-     * 
+     *
      * @return true 実行中
      * @return false 停止中
      */
-    bool isRunning() const {
+    bool isRunning() const
+    {
         return running_;
     }
 
 private:
     /**
      * @brief スレッド関数
-     * 
+     *
      * @param data タスクインスタンス
      * @return int 終了コード
      */
-    static int threadFunction(void* data) {
+    static int threadFunction(void* data)
+    {
         Task* task = static_cast<Task*>(data);
-        
+
         // タスク関数実行
         task->function_();
-        
+
         // 終了処理
         task->running_ = false;
         return 0;
@@ -131,5 +139,5 @@ private:
     SDL_Thread* thread_;
 };
 
-} // namespace rtos
-} // namespace flexhal
+}  // namespace rtos
+}  // namespace flexhal
