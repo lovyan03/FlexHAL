@@ -1,0 +1,54 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.h'
+      - '**.c'
+      - '**.ino'
+      - '**/platformio.ini'
+      - '.github/workflows/build-test.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.h'
+      - '**.c'
+      - '**.ino'
+      - '**/platformio.ini'
+      - '.github/workflows/build-test.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+          
+      - name: Build Examples
+        run: |
+          # Arduino ESP32 Blink Example
+          cd ${{ github.workspace }}/examples/arduino_esp32_blink
+          pio run
+          
+          # Simple Test Example
+          cd ${{ github.workspace }}/examples/simple_test
+          pio run
+          
+          # GPIO Blink Example
+          cd ${{ github.workspace }}/examples/gpio_blink
+          pio run
