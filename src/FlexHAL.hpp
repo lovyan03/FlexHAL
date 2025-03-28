@@ -20,6 +20,7 @@
 #include "flexhal/spi.hpp"   // SPI機能
 #include "flexhal/i2c.hpp"   // I2C機能
 #include "flexhal/rtos.hpp"  // RTOS機能
+#include "flexhal/logger.hpp" // ロガー機能
 
 // 以下は後方互換性のためにグローバル名前空間にエクスポート
 // 新しいコードでは各機能のヘッダファイルを直接インクルードすることを推奨
@@ -28,7 +29,8 @@
 using flexhal::Version;
 
 // 初期化/終了処理関数をグローバル名前空間にエクスポート
-using flexhal::end;
-using flexhal::init;
+// Arduinoとの名前空間の衝突を避けるためにコメントアウト
+// using flexhal::end;
+// using flexhal::init;
 
 #endif  // FLEXHAL_HPP

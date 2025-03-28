@@ -74,12 +74,30 @@ FlexHALは独自の3層構造を採用しています：
 
 1. **プラットフォーム層** - ハードウェア固有の実装（ESP32, AVR, RP2040, デスクトップ）
    - 場所: `impl/platforms/*/`
+   - 例: `impl/platforms/esp32/gpio_arduino.hpp` - ESP32プラットフォーム向けのArduinoフレームワーク実装
+   - 例: `impl/platforms/esp32/gpio_native.hpp` - ESP32プラットフォーム向けのネイティブ実装
 
 2. **フレームワーク層** - フレームワーク固有の実装（Arduino, ESP-IDF, SDL）
    - 場所: `impl/frameworks/*/`
+   - 例: `impl/frameworks/arduino/gpio.hpp` - Arduinoフレームワーク共通の実装
+   - 例: `impl/frameworks/sdl/gpio.hpp` - SDLフレームワーク向けの実装
 
 3. **RTOS層** - RTOS固有の実装（FreeRTOS, NoOS, SDL）
    - 場所: `impl/rtos/*/`
+   - 例: `impl/rtos/freertos/mutex.h` - FreeRTOS向けのミューテックス実装
+   - 例: `impl/rtos/noos/task.h` - RTOSなしの環境向けのタスク実装
+
+### 命名規則と実装の分離
+
+FlexHALでは、各層の責任を明確にするために以下の命名規則を採用しています：
+
+- **プラットフォーム固有の実装**: `impl/platforms/<platform>/<feature>_<framework>.hpp`
+  - 例: `impl/platforms/esp32/gpio_arduino.hpp` - ESP32プラットフォーム上のArduinoフレームワーク向けGPIO実装
+
+- **フレームワーク共通の実装**: `impl/frameworks/<framework>/<feature>.hpp`
+  - 例: `impl/frameworks/arduino/gpio.hpp` - Arduinoフレームワーク共通のGPIO実装
+
+この構造により、共通コードの再利用が容易になり、新しいプラットフォームやフレームワークの追加が簡単になります。
 
 ### エントリーポイント方式 🔗
 

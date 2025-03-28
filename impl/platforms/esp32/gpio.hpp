@@ -16,9 +16,16 @@
 #include <vector>
 #include <Arduino.h>
 
+// フレームワーク実装のインクルード
+#include "gpio_arduino.hpp"
+#include "../../frameworks/espidf/esp32/gpio.hpp"
+
 namespace flexhal {
 namespace platform {
 namespace esp32 {
+
+// 前方宣言
+class ESP32NativePin;
 
 /**
  * @brief ESP32のピン実装クラス
@@ -29,13 +36,30 @@ public:
      * @brief コンストラクタ
      *
      * @param pin_number ピン番号
+     * @param impl 使用するGPIO実装方法
      */
-    ESP32Pin(int pin_number);
+    ESP32Pin(int pin_number, GPIOImplementation impl = GPIOImplementation::Arduino);
 
     /**
      * @brief デストラクタ
      */
     virtual ~ESP32Pin() = default;
+    
+    /**
+     * @brief 実装方法を切り替える
+     * 
+     * @param impl 切り替える実装方法
+     */
+    void setImplementation(GPIOImplementation impl);
+
+    /**
+     * @brief ピン番号を取得
+     *
+     * @return int ピン番号
+     */
+    int getPinNumber() const override {
+        return pin_number_;
+    }
 
     /**
      * @brief ピンモードを設定
@@ -63,18 +87,22 @@ public:
      *
      * @param value 0-255の値
      */
-    void setAnalogValue(uint8_t value) override;
+    void setAnalogValue(uint8_t value);
 
     /**
      * @brief アナログ値を取得（ADC）
      *
      * @return uint16_t 0-4095の値
      */
-    uint16_t getAnalogValue() const override;
+    uint16_t getAnalogValue() const;
 
 private:
     int pin_number_;
     PinMode current_mode_;
+    GPIOImplementation impl_;
+    
+    // 実装クラスへのポインタ
+    std::unique_ptr<IPin> pin_impl_;
 };
 
 /**
@@ -98,9 +126,10 @@ public:
      * @brief ピンを取得
      *
      * @param pin_number ピン番号
+     * @param impl 使用するGPIO実装方法
      * @return std::shared_ptr<IPin> ピンインスタンス
      */
-    std::shared_ptr<IPin> getPin(int pin_number) override;
+    std::shared_ptr<IPin> getPin(int pin_number, GPIOImplementation impl = GPIOImplementation::Arduino) override;
 
     /**
      * @brief 複数ピンのレベルを一度に設定

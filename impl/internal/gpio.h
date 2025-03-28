@@ -18,6 +18,17 @@
 namespace flexhal {
 
 /**
+ * @brief GPIO実装方法
+ */
+enum class GPIOImplementation {
+    Arduino,  ///< Arduinoの実装を使用
+    ESP_IDF,  ///< ESP-IDFの実装を使用
+    Native    ///< ネイティブ実装を使用
+};
+
+
+
+/**
  * @brief GPIOポートインターフェース
  */
 class IGPIOPort : public IDevice {
@@ -28,9 +39,10 @@ public:
      * @brief ピンを取得
      *
      * @param pin_number ピン番号
+     * @param impl 使用するGPIO実装方法（デフォルトはArduino）
      * @return std::shared_ptr<IPin> ピンインスタンス
      */
-    virtual std::shared_ptr<IPin> getPin(int pin_number) = 0;
+    virtual std::shared_ptr<IPin> getPin(int pin_number, GPIOImplementation impl = GPIOImplementation::Arduino) = 0;
 
     /**
      * @brief 複数ピンのレベルを一度に設定
@@ -71,7 +83,7 @@ public:
     void end() override;
     bool isReady() const override;
 
-    std::shared_ptr<IPin> getPin(int pin_number) override;
+    std::shared_ptr<IPin> getPin(int pin_number, GPIOImplementation impl = GPIOImplementation::Arduino) override;
     void setLevels(uint32_t values, uint32_t mask) override;
     uint32_t getLevels() const override;
 

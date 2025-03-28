@@ -102,7 +102,7 @@ SimulatedGPIOPort::~SimulatedGPIOPort()
     }
 }
 
-std::shared_ptr<IPin> SimulatedGPIOPort::getPin(int pin_number)
+std::shared_ptr<IPin> SimulatedGPIOPort::getPin(int pin_number, GPIOImplementation impl)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 

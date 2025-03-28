@@ -9,6 +9,8 @@
  */
 
 #include "gpio.hpp"
+#include "gpio_native.hpp"
+#include "gpio_arduino.hpp"
 #include <Arduino.h>
 
 namespace flexhal {
@@ -17,68 +19,103 @@ namespace esp32 {
 
 // ESP32Pin実装
 
-ESP32Pin::ESP32Pin(int pin_number) : pin_number_(pin_number), current_mode_(PinMode::Undefined)
+ESP32Pin::ESP32Pin(int pin_number, GPIOImplementation impl) 
+    : pin_number_(pin_number), current_mode_(PinMode::Undefined), impl_(impl)
 {
-    // 初期化時は何もしない
+    // 選択された実装方法に基づいてインスタンスを作成
+    setImplementation(impl);
+}
+
+void ESP32Pin::setImplementation(GPIOImplementation impl)
+{
+    impl_ = impl;
+    
+    // 既存の実装を破棄
+    pin_impl_.reset();
+    
+    // 新しい実装を作成
+    switch (impl_) {
+        case GPIOImplementation::Arduino:
+            pin_impl_ = std::make_unique<ESP32ArduinoPin>(pin_number_);
+            break;
+        case GPIOImplementation::ESP_IDF:
+            pin_impl_ = std::make_unique<framework::espidf::esp32::ESP32IDFPin>(pin_number_);
+            break;
+        case GPIOImplementation::Native:
+            pin_impl_ = std::make_unique<ESP32NativePin>(pin_number_);
+            break;
+    }
+    
+    // 現在のモードを設定する（実装切り替え時にモードを維持するため）
+    if (current_mode_ != PinMode::Undefined) {
+        pin_impl_->setMode(current_mode_);
+    }
 }
 
 void ESP32Pin::setMode(PinMode mode)
 {
-    uint8_t arduino_mode;
-
-    // FlexHALのピンモードをArduinoのピンモードに変換
-    switch (mode) {
-        case PinMode::Input:
-            arduino_mode = INPUT;
-            break;
-        case PinMode::Output:
-            arduino_mode = OUTPUT;
-            break;
-        case PinMode::InputPullUp:
-            arduino_mode = INPUT_PULLUP;
-            break;
-        case PinMode::InputPullDown:
-            arduino_mode = INPUT_PULLDOWN;
-            break;
-        case PinMode::OpenDrain:
-            arduino_mode = OUTPUT_OPEN_DRAIN;
-            break;
-        case PinMode::Analog:
-            // ESP32のADCモード
-            arduino_mode = INPUT;
-            break;
-        default:
-            return;  // 未定義のモードは無視
-    }
-
-    // Arduinoの関数でピンモードを設定
-    pinMode(pin_number_, arduino_mode);
+    // 現在のモードを保存
     current_mode_ = mode;
+    
+    // 実装クラスに処理を委託
+    if (pin_impl_) {
+        pin_impl_->setMode(mode);
+    }
 }
 
 void ESP32Pin::setLevel(PinLevel level)
 {
-    // Arduinoの関数でピンレベルを設定
-    digitalWrite(pin_number_, level == PinLevel::High ? HIGH : LOW);
+    // 実装クラスに処理を委託
+    if (pin_impl_) {
+        pin_impl_->setLevel(level);
+    }
 }
 
 PinLevel ESP32Pin::getLevel() const
 {
-    // Arduinoの関数でピンレベルを取得
-    return digitalRead(pin_number_) == HIGH ? PinLevel::High : PinLevel::Low;
+    // 実装クラスに処理を委託
+    if (pin_impl_) {
+        return pin_impl_->getLevel();
+    }
+    return PinLevel::Low; // デフォルト値
 }
 
 void ESP32Pin::setAnalogValue(uint8_t value)
 {
-    // ESP32のPWM出力（0-255の値を0-255に変換）
-    // ESP32はデフォルトで8ビット解像度
-    ledcWrite(pin_number_, value);
+    // 実装クラスが存在する場合のみ処理
+    if (pin_impl_) {
+        // 実装クラスに応じて適切なメソッドを呼び出す
+        switch (impl_) {
+            case GPIOImplementation::Arduino:
+                static_cast<ESP32ArduinoPin*>(pin_impl_.get())->setAnalogValue(value);
+                break;
+            case GPIOImplementation::ESP_IDF:
+                static_cast<framework::espidf::esp32::ESP32IDFPin*>(pin_impl_.get())->setAnalogValue(value);
+                break;
+            case GPIOImplementation::Native:
+                static_cast<ESP32NativePin*>(pin_impl_.get())->setAnalogValue(value);
+                break;
+        }
+    }
 }
 
 uint16_t ESP32Pin::getAnalogValue() const
 {
-    // ESP32のADC入力（0-4095の値を返す）
-    return analogRead(pin_number_);
+    // 実装クラスが存在する場合のみ処理
+    if (pin_impl_) {
+        // 実装クラスに応じて適切なメソッドを呼び出す
+        switch (impl_) {
+            case GPIOImplementation::Arduino:
+                return static_cast<ESP32ArduinoPin*>(pin_impl_.get())->getAnalogValue();
+            case GPIOImplementation::ESP_IDF:
+                return static_cast<framework::espidf::esp32::ESP32IDFPin*>(pin_impl_.get())->getAnalogValue();
+            case GPIOImplementation::Native:
+                return static_cast<ESP32NativePin*>(pin_impl_.get())->getAnalogValue();
+            default:
+                break;
+        }
+    }
+    return 0; // デフォルト値
 }
 
 // ESP32GPIOPort実装
@@ -92,7 +129,7 @@ ESP32GPIOPort::ESP32GPIOPort(int pin_count) : pin_count_(pin_count), initialized
     }
 }
 
-std::shared_ptr<IPin> ESP32GPIOPort::getPin(int pin_number)
+std::shared_ptr<IPin> ESP32GPIOPort::getPin(int pin_number, GPIOImplementation impl)
 {
     // 範囲チェック
     if (pin_number < 0 || pin_number >= pin_count_) {
@@ -101,7 +138,10 @@ std::shared_ptr<IPin> ESP32GPIOPort::getPin(int pin_number)
 
     // ピンが未作成なら作成
     if (!pins_[pin_number]) {
-        pins_[pin_number] = std::make_shared<ESP32Pin>(pin_number);
+        pins_[pin_number] = std::make_shared<ESP32Pin>(pin_number, impl);
+    } else {
+        // 既存のピンの実装方法を変更
+        std::static_pointer_cast<ESP32Pin>(pins_[pin_number])->setImplementation(impl);
     }
 
     return pins_[pin_number];
@@ -113,7 +153,11 @@ void ESP32GPIOPort::setLevels(uint32_t values, uint32_t mask)
     for (int i = 0; i < 32 && i < pin_count_; ++i) {
         if (mask & (1 << i)) {
             bool level = (values & (1 << i)) != 0;
-            digitalWrite(i, level ? HIGH : LOW);
+            // 実装クラスを使用してピンレベルを設定
+            auto pin = getPin(i);
+            if (pin) {
+                pin->setLevel(level ? PinLevel::High : PinLevel::Low);
+            }
         }
     }
 }
@@ -123,7 +167,8 @@ uint32_t ESP32GPIOPort::getLevels() const
     // 32ビット分のピンの値を取得
     uint32_t result = 0;
     for (int i = 0; i < 32 && i < pin_count_; ++i) {
-        if (digitalRead(i) == HIGH) {
+        // 実装クラスを使用してピンレベルを取得
+        if (pins_[i] && pins_[i]->getLevel() == PinLevel::High) {
             result |= (1 << i);
         }
     }

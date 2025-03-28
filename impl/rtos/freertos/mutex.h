@@ -21,7 +21,7 @@ namespace freertos {
 /**
  * @brief FreeRTOS用ミューテックス実装
  */
-class FreeRTOSMutex : public IMutex {
+class FreeRTOSMutex : public flexhal::IMutex {
 public:
     /**
      * @brief コンストラクタ
@@ -44,12 +44,18 @@ public:
 
     /**
      * @brief ミューテックスをロック
+     * 
+     * @param timeout_ms タイムアウト時間（ミリ秒）、0は永久待機
+     * @return true ロック成功
+     * @return false ロック失敗
      */
-    void lock() override
+    bool lock(uint32_t timeout_ms = 0) override
     {
         if (mutex_ != nullptr) {
-            xSemaphoreTake(mutex_, portMAX_DELAY);
+            TickType_t ticks = (timeout_ms == 0) ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms);
+            return (xSemaphoreTake(mutex_, ticks) == pdTRUE);
         }
+        return false;
     }
 
     /**
@@ -60,6 +66,20 @@ public:
         if (mutex_ != nullptr) {
             xSemaphoreGive(mutex_);
         }
+    }
+
+    /**
+     * @brief ミューテックスをトライロック（ブロックなし）
+     * 
+     * @return true ロック成功
+     * @return false ロック失敗
+     */
+    bool tryLock() override
+    {
+        if (mutex_ != nullptr) {
+            return (xSemaphoreTake(mutex_, 0) == pdTRUE);
+        }
+        return false;
     }
 
 private:

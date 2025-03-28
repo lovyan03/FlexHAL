@@ -23,7 +23,7 @@ namespace freertos {
 /**
  * @brief FreeRTOS用タスク実装
  */
-class FreeRTOSTask : public ITask {
+class FreeRTOSTask : public flexhal::ITask {
 public:
     /**
      * @brief コンストラクタ
@@ -34,7 +34,7 @@ public:
      * @param priority タスク優先度
      * @param core_id 実行コアID（-1は自動選択）
      */
-    FreeRTOSTask(const std::string& name, std::function<void()> function, size_t stack_size, TaskPriority priority,
+    FreeRTOSTask(const std::string& name, std::function<void()> function, size_t stack_size, flexhal::TaskPriority priority,
                  int core_id)
         : name_(name),
           function_(function),
@@ -69,16 +69,16 @@ public:
         // FreeRTOSの優先度に変換
         UBaseType_t freertos_priority;
         switch (priority_) {
-            case TaskPriority::Low:
+            case flexhal::TaskPriority::Low:
                 freertos_priority = tskIDLE_PRIORITY + 1;
                 break;
-            case TaskPriority::Normal:
+            case flexhal::TaskPriority::Normal:
                 freertos_priority = tskIDLE_PRIORITY + 2;
                 break;
-            case TaskPriority::High:
+            case flexhal::TaskPriority::High:
                 freertos_priority = tskIDLE_PRIORITY + 3;
                 break;
-            case TaskPriority::Realtime:
+            case flexhal::TaskPriority::Realtime:
                 freertos_priority = configMAX_PRIORITIES - 1;
                 break;
             default:
@@ -132,6 +132,61 @@ public:
         return running_;
     }
 
+    /**
+     * @brief タスク優先度を設定
+     *
+     * @param priority 設定する優先度
+     */
+    void setPriority(flexhal::TaskPriority priority) override
+    {
+        priority_ = priority;
+        
+        if (running_ && handle_ != nullptr) {
+            // FreeRTOSの優先度に変換
+            UBaseType_t freertos_priority;
+            switch (priority_) {
+                case flexhal::TaskPriority::Low:
+                    freertos_priority = tskIDLE_PRIORITY + 1;
+                    break;
+                case flexhal::TaskPriority::Normal:
+                    freertos_priority = tskIDLE_PRIORITY + 2;
+                    break;
+                case flexhal::TaskPriority::High:
+                    freertos_priority = tskIDLE_PRIORITY + 3;
+                    break;
+                case flexhal::TaskPriority::Realtime:
+                    freertos_priority = configMAX_PRIORITIES - 1;
+                    break;
+                default:
+                    freertos_priority = tskIDLE_PRIORITY + 2;  // デフォルトはNormal
+                    break;
+            }
+            
+            // 実行中のタスクの優先度を変更
+            vTaskPrioritySet(handle_, freertos_priority);
+        }
+    }
+
+    /**
+     * @brief タスク優先度を取得
+     *
+     * @return TaskPriority 現在の優先度
+     */
+    flexhal::TaskPriority getPriority() const override
+    {
+        return priority_;
+    }
+
+    /**
+     * @brief タスク名を取得
+     *
+     * @return const std::string& タスク名
+     */
+    const std::string& getName() const override
+    {
+        return name_;
+    }
+
 private:
     /**
      * @brief FreeRTOSタスク関数（静的）
@@ -154,7 +209,7 @@ private:
     std::string name_;
     std::function<void()> function_;
     size_t stack_size_;
-    TaskPriority priority_;
+    flexhal::TaskPriority priority_;
     int core_id_;
     TaskHandle_t handle_;
     bool running_;

@@ -24,7 +24,7 @@ std::shared_ptr<IMutex> createMutex()
 
 // タスクを作成
 std::shared_ptr<ITask> createTask(const std::string& name, std::function<void()> function, size_t stack_size,
-                                  TaskPriority priority, int core_id)
+                                  flexhal::TaskPriority priority, int core_id)
 {
     return std::make_shared<rtos::freertos::FreeRTOSTask>(name, function, stack_size, priority, core_id);
 }
@@ -33,6 +33,24 @@ std::shared_ptr<ITask> createTask(const std::string& name, std::function<void()>
 void sleep(uint32_t ms)
 {
     vTaskDelay(ms / portTICK_PERIOD_MS);
+}
+
+// 現在の時刻をミリ秒単位で取得
+uint32_t millis()
+{
+    return (uint32_t)(xTaskGetTickCount() * portTICK_PERIOD_MS);
+}
+
+// 現在の時刻をマイクロ秒単位で取得
+uint32_t micros()
+{
+    return (uint32_t)(xTaskGetTickCount() * portTICK_PERIOD_MS * 1000);
+}
+
+// 現在のタスクを一時的に中断
+void yield()
+{
+    taskYIELD();
 }
 
 }  // namespace flexhal

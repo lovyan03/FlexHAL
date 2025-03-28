@@ -4,7 +4,7 @@
 mkdir -p build/obj
 
 # コンパイルフラグ
-CXXFLAGS="-std=c++17 -Wall -Wextra -I. -DFLEXHAL_PLATFORM_DESKTOP"
+CXXFLAGS="-std=c++17 -Wall -Wextra -I. -I./src -DFLEXHAL_PLATFORM_DESKTOP"
 
 # SDLフラグ
 SDL_CFLAGS=$(sdl2-config --cflags)
@@ -13,12 +13,13 @@ SDL_LIBS=$(sdl2-config --libs)
 # ソースファイル
 SOURCES=(
     "src/FlexHAL_Impl.cpp"
-    "impl/frameworks/sdl/window.cpp"
+    # SDLのウィンドウ実装は.inlファイルなのでコメントアウト
+    # "impl/frameworks/sdl/window.inl"
 )
 
 # サンプルアプリケーション
 EXAMPLES=(
-    "examples/gpio_blink/main.cpp"
+    "examples/gpio_blink/src/main.cpp"
 )
 
 echo "FlexHALライブラリのビルドを開始します..."

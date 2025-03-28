@@ -14,6 +14,7 @@
 #include "core.inl"
 #include "factory.inl"
 #include "gpio.inl"
+#include "logger.inl"
 
 // 将来的に追加される実装ファイルもここに追加
 // #include "spi.cpp"

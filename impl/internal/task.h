@@ -13,18 +13,8 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <cstdint>
 #include "platform_detect.h"
-
-// RTOSに応じた実装を選択
-#if defined(FLEXHAL_RTOS_FREERTOS)
-#include "../../impl/rtos/freertos/task.h"
-#elif defined(FLEXHAL_RTOS_ZEPHYR)
-#include "../../impl/rtos/zephyr/task.h"
-#elif defined(FLEXHAL_PLATFORM_DESKTOP)
-#include "../../impl/rtos/sdl/task.h"
-#else
-#include "../../impl/rtos/noos/task.h"
-#endif
 
 namespace flexhal {
 
