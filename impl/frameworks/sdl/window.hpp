@@ -11,7 +11,14 @@
 #ifndef FLEXHAL_IMPL_FRAMEWORKS_SDL_WINDOW_HPP
 #define FLEXHAL_IMPL_FRAMEWORKS_SDL_WINDOW_HPP
 
-#include <SDL.h>
+// SDL.hのインクルードパスは環境によって異なるため、__has_includeマクロで分岐
+#if __has_include(<SDL.h>)
+  #include <SDL.h>
+#elif __has_include(<SDL2/SDL.h>)
+  #include <SDL2/SDL.h>
+#else
+  #error "SDL.h not found. Please install SDL2 development libraries."
+#endif
 #include <string>
 #include <memory>
 #include <functional>
