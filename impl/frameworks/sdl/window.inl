@@ -1,5 +1,5 @@
 /**
- * @file window.cpp
+ * @file window.inl
  * @brief FlexHAL - SDLウィンドウ管理の実装
  * @version 0.1.0
  * @date 2025-03-28
