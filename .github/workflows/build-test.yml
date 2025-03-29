@@ -41,14 +41,17 @@ jobs:
           
       - name: Build Examples
         run: |
+          # ルートディレクトリから各環境をビルド
+          cd ${{ github.workspace }}
+          
           # Arduino ESP32 Blink Example
-          cd ${{ github.workspace }}/examples/arduino_esp32_blink
-          pio run
+          pio run -e arduino_esp32_blink
           
           # Simple Test Example
-          cd ${{ github.workspace }}/examples/simple_test
-          pio run
+          pio run -e simple_test_esp32
           
-          # GPIO Blink Example
-          cd ${{ github.workspace }}/examples/gpio_blink
-          pio run
+          # GPIO Blink Example (ESP32)
+          pio run -e gpio_blink_esp32
+          
+          # GPIO Blink Example (Native)
+          pio run -e gpio_blink_native
