@@ -17,8 +17,7 @@ namespace esp32 {
 
 // ESP32NativePin実装
 
-ESP32NativePin::ESP32NativePin(int pin_number)
-    : pin_number_(pin_number), current_mode_(PinMode::Undefined)
+ESP32NativePin::ESP32NativePin(int pin_number) : pin_number_(pin_number), current_mode_(PinMode::Undefined)
 {
     // 初期化時は何もしない
 }
@@ -35,36 +34,36 @@ void ESP32NativePin::setMode(PinMode mode)
             arduino_mode = INPUT;
             break;
         }
-            
+
         case PinMode::Output: {
             arduino_mode = OUTPUT;
             break;
         }
-            
+
         case PinMode::InputPullUp: {
             arduino_mode = INPUT_PULLUP;
             break;
         }
-            
+
         case PinMode::InputPullDown: {
             arduino_mode = INPUT_PULLDOWN;
             break;
         }
-            
+
         case PinMode::OpenDrain: {
             arduino_mode = OUTPUT_OPEN_DRAIN;
             break;
         }
-            
+
         case PinMode::Analog: {
             arduino_mode = INPUT;
             break;
         }
-            
+
         default:
             return;  // 未定義のモードは無視
     }
-    
+
     // Arduino APIを使用してピンモードを設定
     // ネイティブ実装では、将来的にはレジスタ直接アクセスを実装する
     pinMode(pin_number_, arduino_mode);
@@ -107,6 +106,6 @@ uint16_t ESP32NativePin::getAnalogValue() const
     return analogRead(pin_number_);
 }
 
-} // namespace esp32
-} // namespace platform
-} // namespace flexhal
+}  // namespace esp32
+}  // namespace platform
+}  // namespace flexhal

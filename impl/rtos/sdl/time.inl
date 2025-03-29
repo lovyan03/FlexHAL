@@ -15,9 +15,9 @@
 
 // SDL2のヘッダーファイルのインクルード方法を条件分岐で実装
 #if defined(__has_include) && __has_include(<SDL2/SDL.h>)
-  #include <SDL2/SDL.h>
+#include <SDL2/SDL.h>
 #elif defined(__has_include) && __has_include(<SDL.h>)
-  #include <SDL.h>
+#include <SDL.h>
 #endif
 
 namespace flexhal {
@@ -26,14 +26,16 @@ namespace flexhal {
 static std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
 
 // 現在の時間をミリ秒単位で取得
-unsigned long millis() {
+unsigned long millis()
+{
     auto now = std::chrono::steady_clock::now();
     return static_cast<unsigned long>(std::chrono::duration_cast<std::chrono::milliseconds>(now - start_time).count());
 }
 
 // 指定されたミリ秒数だけスリープ
-void sleep(unsigned int ms) {
+void sleep(unsigned int ms)
+{
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-} // namespace flexhal
+}  // namespace flexhal

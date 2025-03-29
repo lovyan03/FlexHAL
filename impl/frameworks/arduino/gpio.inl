@@ -17,8 +17,7 @@ namespace arduino {
 
 // ArduinoPin実装
 
-ArduinoPin::ArduinoPin(int pin_number)
-    : pin_number_(pin_number), current_mode_(PinMode::Undefined)
+ArduinoPin::ArduinoPin(int pin_number) : pin_number_(pin_number), current_mode_(PinMode::Undefined)
 {
     // 初期化時は何もしない
 }
@@ -87,8 +86,7 @@ uint16_t ArduinoPin::getAnalogValue() const
 
 // ArduinoGPIOPort実装
 
-ArduinoGPIOPort::ArduinoGPIOPort()
-    : initialized_(false)
+ArduinoGPIOPort::ArduinoGPIOPort() : initialized_(false)
 {
 }
 
@@ -122,7 +120,7 @@ std::shared_ptr<IPin> ArduinoGPIOPort::getPin(int pin_number, GPIOImplementation
     if (pin) {
         pins_[pin_number] = pin;
     }
-    
+
     return pin;
 }
 
@@ -162,6 +160,6 @@ uint32_t ArduinoGPIOPort::getLevels() const
     return result;
 }
 
-} // namespace arduino
-} // namespace framework
-} // namespace flexhal
+}  // namespace arduino
+}  // namespace framework
+}  // namespace flexhal

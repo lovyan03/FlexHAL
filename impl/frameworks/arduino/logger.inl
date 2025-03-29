@@ -20,14 +20,16 @@ namespace flexhal {
 namespace impl {
 namespace arduino {
 
-Logger::Logger() {
+Logger::Logger()
+{
 #if defined(ESP32) || defined(ESP_PLATFORM)
     // ESP32環境ではミューテックスを初期化
     mutex_ = xSemaphoreCreateMutex();
 #endif
 }
 
-Logger::~Logger() {
+Logger::~Logger()
+{
 #if defined(ESP32) || defined(ESP_PLATFORM)
     // ESP32環境ではミューテックスを解放
     if (mutex_) {
@@ -37,7 +39,8 @@ Logger::~Logger() {
 #endif
 }
 
-void Logger::log(LogLevel level, const char* message) {
+void Logger::log(LogLevel level, const char* message)
+{
     // 最小ログレベルより低いログはスキップ
     if (level < min_level_) {
         return;
@@ -53,11 +56,21 @@ void Logger::log(LogLevel level, const char* message) {
     // レベルに応じたプレフィックスを設定
     const char* prefix = "";
     switch (level) {
-        case LogLevel::Debug:   prefix = "[DEBUG] "; break;
-        case LogLevel::Info:    prefix = "[INFO] "; break;
-        case LogLevel::Warning: prefix = "[WARN] "; break;
-        case LogLevel::Error:   prefix = "[ERROR] "; break;
-        case LogLevel::Fatal:   prefix = "[FATAL] "; break;
+        case LogLevel::Debug:
+            prefix = "[DEBUG] ";
+            break;
+        case LogLevel::Info:
+            prefix = "[INFO] ";
+            break;
+        case LogLevel::Warning:
+            prefix = "[WARN] ";
+            break;
+        case LogLevel::Error:
+            prefix = "[ERROR] ";
+            break;
+        case LogLevel::Fatal:
+            prefix = "[FATAL] ";
+            break;
     }
 
     // メッセージを出力
@@ -72,7 +85,8 @@ void Logger::log(LogLevel level, const char* message) {
 #endif
 }
 
-void Logger::setThreadSafe(bool enable) {
+void Logger::setThreadSafe(bool enable)
+{
     thread_safe_ = enable;
 #if !defined(ESP32) && !defined(ESP_PLATFORM)
     // ESP32以外の環境では警告を出す（シングルスレッドなので意味がない）
@@ -82,10 +96,11 @@ void Logger::setThreadSafe(bool enable) {
 #endif
 }
 
-void Logger::setMinLogLevel(LogLevel level) {
+void Logger::setMinLogLevel(LogLevel level)
+{
     min_level_ = level;
 }
 
-} // namespace arduino
-} // namespace impl
-} // namespace flexhal
+}  // namespace arduino
+}  // namespace impl
+}  // namespace flexhal

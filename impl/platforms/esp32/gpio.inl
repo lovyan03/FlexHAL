@@ -19,7 +19,7 @@ namespace esp32 {
 
 // ESP32Pin実装
 
-ESP32Pin::ESP32Pin(int pin_number, GPIOImplementation impl) 
+ESP32Pin::ESP32Pin(int pin_number, GPIOImplementation impl)
     : pin_number_(pin_number), current_mode_(PinMode::Undefined), impl_(impl)
 {
     // 選択された実装方法に基づいてインスタンスを作成
@@ -29,10 +29,10 @@ ESP32Pin::ESP32Pin(int pin_number, GPIOImplementation impl)
 void ESP32Pin::setImplementation(GPIOImplementation impl)
 {
     impl_ = impl;
-    
+
     // 既存の実装を破棄
     pin_impl_.reset();
-    
+
     // 新しい実装を作成
     switch (impl_) {
         case GPIOImplementation::Arduino:
@@ -45,7 +45,7 @@ void ESP32Pin::setImplementation(GPIOImplementation impl)
             pin_impl_ = std::make_unique<ESP32NativePin>(pin_number_);
             break;
     }
-    
+
     // 現在のモードを設定する（実装切り替え時にモードを維持するため）
     if (current_mode_ != PinMode::Undefined) {
         pin_impl_->setMode(current_mode_);
@@ -56,7 +56,7 @@ void ESP32Pin::setMode(PinMode mode)
 {
     // 現在のモードを保存
     current_mode_ = mode;
-    
+
     // 実装クラスに処理を委託
     if (pin_impl_) {
         pin_impl_->setMode(mode);
@@ -77,7 +77,7 @@ PinLevel ESP32Pin::getLevel() const
     if (pin_impl_) {
         return pin_impl_->getLevel();
     }
-    return PinLevel::Low; // デフォルト値
+    return PinLevel::Low;  // デフォルト値
 }
 
 void ESP32Pin::setAnalogValue(uint8_t value)
@@ -115,7 +115,7 @@ uint16_t ESP32Pin::getAnalogValue() const
                 break;
         }
     }
-    return 0; // デフォルト値
+    return 0;  // デフォルト値
 }
 
 // ESP32GPIOPort実装

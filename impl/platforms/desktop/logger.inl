@@ -18,7 +18,8 @@ namespace flexhal {
 namespace impl {
 namespace desktop {
 
-void Logger::log(LogLevel level, const char* message) {
+void Logger::log(LogLevel level, const char* message)
+{
     // 最小ログレベルより低いログはスキップ
     if (level < min_level_) {
         return;
@@ -31,14 +32,14 @@ void Logger::log(LogLevel level, const char* message) {
     }
 
     // 現在時刻を取得
-    auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
+    auto now   = std::chrono::system_clock::now();
+    auto time  = std::chrono::system_clock::to_time_t(now);
     std::tm tm = *std::localtime(&time);
 
     // レベルに応じた出力先とプレフィックスを選択
     const char* prefix = "";
-    std::ostream* out = &std::cout;
-    
+    std::ostream* out  = &std::cout;
+
     switch (level) {
         case LogLevel::Debug:
             prefix = "[DEBUG] ";
@@ -51,29 +52,31 @@ void Logger::log(LogLevel level, const char* message) {
             break;
         case LogLevel::Error:
             prefix = "[ERROR] ";
-            out = &std::cerr;
+            out    = &std::cerr;
             break;
         case LogLevel::Fatal:
             prefix = "[FATAL] ";
-            out = &std::cerr;
+            out    = &std::cerr;
             break;
     }
 
     // タイムスタンプを出力
     *out << std::put_time(&tm, "%Y-%m-%d %H:%M:%S") << " ";
-    
+
     // メッセージを出力
     *out << prefix << message << std::endl;
 }
 
-void Logger::setThreadSafe(bool enable) {
+void Logger::setThreadSafe(bool enable)
+{
     thread_safe_ = enable;
 }
 
-void Logger::setMinLogLevel(LogLevel level) {
+void Logger::setMinLogLevel(LogLevel level)
+{
     min_level_ = level;
 }
 
-} // namespace desktop
-} // namespace impl
-} // namespace flexhal
+}  // namespace desktop
+}  // namespace impl
+}  // namespace flexhal

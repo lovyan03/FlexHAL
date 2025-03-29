@@ -22,8 +22,7 @@ namespace esp32 {
 
 // ESP32ArduinoPin実装
 
-ESP32ArduinoPin::ESP32ArduinoPin(int pin_number)
-    : framework::arduino::ArduinoPin(pin_number)
+ESP32ArduinoPin::ESP32ArduinoPin(int pin_number) : framework::arduino::ArduinoPin(pin_number)
 {
     // 初期化時は何もしない
 }
@@ -44,8 +43,7 @@ uint16_t ESP32ArduinoPin::getAnalogValue() const
 
 // ESP32ArduinoGPIOPort実装
 
-ESP32ArduinoGPIOPort::ESP32ArduinoGPIOPort()
-    : framework::arduino::ArduinoGPIOPort()
+ESP32ArduinoGPIOPort::ESP32ArduinoGPIOPort() : framework::arduino::ArduinoGPIOPort()
 {
     // 初期化時は何もしない
 }
@@ -56,6 +54,6 @@ std::shared_ptr<IPin> ESP32ArduinoGPIOPort::createPin(int pin_number)
     return std::make_shared<ESP32ArduinoPin>(pin_number);
 }
 
-} // namespace esp32
-} // namespace platform
-} // namespace flexhal
+}  // namespace esp32
+}  // namespace platform
+}  // namespace flexhal
