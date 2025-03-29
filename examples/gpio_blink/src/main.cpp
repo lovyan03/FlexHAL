@@ -28,9 +28,10 @@
 #endif
 
 // ロガー関連のヘルパー関数
-inline void logVersion() {
+inline void logVersion()
+{
     char version_info[64];
-    snprintf(version_info, sizeof(version_info), "Version: %s", flexhal::Version::string);
+    snprintf(version_info, sizeof(version_info), "Version: %s", flexhal::Version::getString());
     flexhal::info(version_info);
 }
 
@@ -40,14 +41,15 @@ constexpr int LED_PIN = 13;  // Arduino互換のLEDピン
 // グローバル変数
 std::shared_ptr<flexhal::IGPIOPort> gpio = nullptr;
 std::shared_ptr<flexhal::IPin> led_pin;
-bool led_state = false;
+bool led_state            = false;
 uint32_t last_toggle_time = 0;
 
 /**
  * @brief FlexHALの初期化とLEDピンのセットアップを行う
  * @return 初期化が成功したかどうか
  */
-bool setupFlexHAL() {
+bool setupFlexHAL()
+{
 #if defined(ARDUINO)
     // Arduino環境ではSerialを初期化
     Serial.begin(115200);
@@ -56,13 +58,13 @@ bool setupFlexHAL() {
     // アプリケーション情報を表示
     flexhal::info("FlexHAL GPIO Blink Example");
     logVersion();
-    
+
     // FlexHALを初期化
     if (!flexhal::init()) {
         flexhal::error("FlexHAL initialization failed!");
         return false;
     }
-    
+
     // GPIOポートを取得
     gpio = flexhal::getDefaultGPIOPort();
     if (!gpio) {
@@ -70,7 +72,7 @@ bool setupFlexHAL() {
         flexhal::end();
         return false;
     }
-    
+
     // LEDピンを取得して出力モードに設定
     led_pin = gpio->getPin(LED_PIN);
     if (!led_pin) {
@@ -78,12 +80,12 @@ bool setupFlexHAL() {
         flexhal::end();
         return false;
     }
-    
+
     // LEDピンを出力モードに設定
     led_pin->setMode(flexhal::PinMode::Output);
     flexhal::info("LED pin set to OUTPUT mode");
     flexhal::info("Blinking LED...");
-    
+
     // 初期時間を設定
     last_toggle_time = flexhal::millis();
     return true;
@@ -93,33 +95,34 @@ bool setupFlexHAL() {
  * @brief LEDを点滅させる処理を1回実行
  * @return 処理が正常に続行できるかどうか
  */
-bool updateLED() {
+bool updateLED()
+{
     if (!gpio || !led_pin) return false;
-    
+
     // 現在時刻を取得
     uint32_t current_time = flexhal::millis();
-    uint32_t elapsed = current_time - last_toggle_time;
-    
+    uint32_t elapsed      = current_time - last_toggle_time;
+
     // 500ミリ秒経過したらLEDの状態を切り替え
     if (elapsed >= 500) {
         // LEDの状態を切り替え
         led_state = !led_state;
         led_pin->setLevel(led_state ? flexhal::PinLevel::High : flexhal::PinLevel::Low);
-        
+
         // 状態を表示
         char status_msg[32];
         snprintf(status_msg, sizeof(status_msg), "LED: %s", led_state ? "ON" : "OFF");
         flexhal::info(status_msg);
-        
+
         // 次の切り替え時間を設定
         last_toggle_time = current_time;
     }
-    
+
     // FlexHALの更新処理
     if (!flexhal::update()) {
         return false;
     }
-    
+
     // 少し待機
     flexhal::sleep(10);
     return true;
@@ -128,11 +131,13 @@ bool updateLED() {
 #if defined(ARDUINO) || defined(ESP_PLATFORM) || defined(ESP32) || defined(ESP8266)
 // Arduino環境用の関数
 
-void setup() {
+void setup()
+{
     setupFlexHAL();
 }
 
-void loop() {
+void loop()
+{
     updateLED();
 }
 
@@ -145,9 +150,9 @@ int main()
     if (!setupFlexHAL()) {
         return 1;
     }
-    
+
     flexhal::info("Press Ctrl+C to exit");
-    
+
     // メインループ
     try {
         bool running = true;
@@ -159,7 +164,7 @@ int main()
         snprintf(error_msg, sizeof(error_msg), "Error: %s", e.what());
         flexhal::error(error_msg);
     }
-    
+
     // FlexHALの終了処理
     flexhal::end();
     return 0;

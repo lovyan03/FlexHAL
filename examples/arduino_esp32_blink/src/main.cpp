@@ -43,7 +43,7 @@ void setup()
     // ログ出力
     flexhal::info("FlexHAL GPIO Blink Example");
     char version_info[64];
-    snprintf(version_info, sizeof(version_info), "Version: %s", flexhal::Version::string);
+    snprintf(version_info, sizeof(version_info), "Version: %s", flexhal::Version::getString());
     flexhal::info(version_info);
 
     // GPIOポートを取得

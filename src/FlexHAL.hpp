@@ -15,12 +15,12 @@
 #include "../impl/internal/platform_detect.h"
 
 // 各機能のヘッダファイルをインクルード
-#include "flexhal/core.hpp"  // コア機能
-#include "flexhal/gpio.hpp"  // GPIO機能
-#include "flexhal/spi.hpp"   // SPI機能
-#include "flexhal/i2c.hpp"   // I2C機能
-#include "flexhal/rtos.hpp"  // RTOS機能
-#include "flexhal/logger.hpp" // ロガー機能
+#include "flexhal/core.hpp"    // コア機能
+#include "flexhal/gpio.hpp"    // GPIO機能
+#include "flexhal/spi.hpp"     // SPI機能
+#include "flexhal/i2c.hpp"     // I2C機能
+#include "flexhal/rtos.hpp"    // RTOS機能
+#include "flexhal/logger.hpp"  // ロガー機能
 
 // 以下は後方互換性のためにグローバル名前空間にエクスポート
 // 新しいコードでは各機能のヘッダファイルを直接インクルードすることを推奨
