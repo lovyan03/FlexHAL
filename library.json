@@ -17,6 +17,6 @@
   ],
   "license": "MIT",
   "homepage": "https://github.com/lovyan03/FlexHAL",
-  "frameworks": ["arduino", "espidf"],
+  "frameworks": ["arduino", "espidf", "*"],
   "platforms": ["espressif32", "atmelavr", "raspberrypi"]
 }
