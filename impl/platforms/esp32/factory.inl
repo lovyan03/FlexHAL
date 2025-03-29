@@ -41,18 +41,21 @@ std::shared_ptr<IPin> getPin(int pin_number)
     return port->getPin(pin_number);
 }
 
-// ライブラリの初期化
-bool init()
-{
-    auto& platform = platform::esp32::ESP32Platform::getInstance();
-    return platform.init();
-}
+// プラットフォーム固有の初期化
+namespace platform {
+    namespace esp32 {
+        bool initImpl()
+        {
+            auto& platform = ESP32Platform::getInstance();
+            return platform.init();
+        }
 
-// ライブラリの終了処理
-void end()
-{
-    auto& platform = platform::esp32::ESP32Platform::getInstance();
-    platform.end();
+        void endImpl()
+        {
+            auto& platform = ESP32Platform::getInstance();
+            platform.end();
+        }
+    }
 }
 
 // ライブラリの更新処理

@@ -11,11 +11,27 @@
 #ifndef FLEXHAL_RTOS_HPP
 #define FLEXHAL_RTOS_HPP
 
-#include "core.hpp"
+#include <functional>  // for std::function
+#include <memory>  // for std::shared_ptr
+#include <string>  // for std::string
 #include "../../impl/internal/mutex.h"
 #include "../../impl/internal/task.h"
 
 namespace flexhal {
+
+namespace rtos {
+    /**
+     * @brief RTOSレイヤーの初期化
+     * @return true 初期化成功
+     * @return false 初期化失敗
+     */
+    bool init();
+
+    /**
+     * @brief RTOSレイヤーの終了処理
+     */
+    void end();
+}
 
 /**
  * @brief ミューテックスを作成

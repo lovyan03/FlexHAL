@@ -18,26 +18,5 @@
   "license": "MIT",
   "homepage": "https://github.com/lovyan03/FlexHAL",
   "frameworks": ["arduino", "espidf"],
-  "platforms": ["espressif32", "atmelavr", "raspberrypi"],
-  "build": {
-    "srcDir": "src",
-    "includeDir": "src",
-    "includePath": ["src", "impl"],
-    "srcFilter": [
-      "+<**/*.cpp>",
-      "+<**/*.c>"
-    ]
-  },
-  "export": {
-    "include": [
-      "src/*",
-      "include/*",
-      "impl/**/*",
-      "examples/**/*",
-      "library.json",
-      "library.properties",
-      "LICENSE",
-      "README.md"
-    ]
-  }
+  "platforms": ["espressif32", "atmelavr", "raspberrypi"]
 }

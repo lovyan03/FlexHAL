@@ -14,11 +14,7 @@
 #endif
 
 // FlexHALヘッダー
-#if __has_include("FlexHAL.hpp")
-#include "FlexHAL.hpp"
-#else
-#include "../../src/FlexHAL.hpp"
-#endif
+#include <FlexHAL.hpp>
 
 // ネイティブ環境用ヘッダー
 #if !defined(ARDUINO) && !defined(ESP_PLATFORM) && !defined(ESP32) && !defined(ESP8266)

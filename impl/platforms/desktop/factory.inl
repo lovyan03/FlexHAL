@@ -39,18 +39,21 @@ std::shared_ptr<IPin> getPin(int pin_number)
     return port->getPin(pin_number);
 }
 
-// ライブラリの初期化
-bool init()
-{
-    auto& simulation = platform::desktop::DesktopSimulation::getInstance();
-    return simulation.init();
-}
+// プラットフォーム固有の初期化
+namespace platform {
+    namespace desktop {
+        bool initImpl()
+        {
+            auto& simulation = DesktopSimulation::getInstance();
+            return simulation.init();
+        }
 
-// ライブラリの終了処理
-void end()
-{
-    auto& simulation = platform::desktop::DesktopSimulation::getInstance();
-    simulation.end();
+        void endImpl()
+        {
+            auto& simulation = DesktopSimulation::getInstance();
+            simulation.end();
+        }
+    }
 }
 
 // ライブラリの更新処理

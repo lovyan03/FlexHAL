@@ -14,13 +14,7 @@
 #endif
 
 // FlexHALライブラリをインクルード
-#if __has_include("FlexHAL.hpp")
-// PlatformIOビルド用
-#include "FlexHAL.hpp"
-#else
-// Arduino IDEビルド用
-#include "../../src/FlexHAL.hpp"
-#endif
+#include <FlexHAL.hpp>
 
 // LEDのピン番号
 constexpr int LED_PIN = 13;  // ESP32のLEDピン（多くのボードでは内蔵LED）

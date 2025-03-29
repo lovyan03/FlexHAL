@@ -10,6 +10,9 @@
 
 #include "core.hpp"
 #include "logger.hpp"
+#include "platform.hpp"
+#include "framework.hpp"
+#include "rtos.hpp"
 
 namespace flexhal {
 
@@ -26,6 +29,27 @@ bool init()
     // デフォルトロガーの初期化
     initDefaultLogger();
 
+    // プラットフォーム初期化
+    if (!platform::init()) {
+        error("Platform initialization failed");
+        return false;
+    }
+
+    // フレームワーク初期化
+    if (!framework::init()) {
+        error("Framework initialization failed");
+        platform::end();
+        return false;
+    }
+
+    // RTOS初期化
+    if (!rtos::init()) {
+        error("RTOS initialization failed");
+        framework::end();
+        platform::end();
+        return false;
+    }
+
     // 初期化完了
     s_initialized = true;
     info("FlexHAL initialized");
@@ -38,6 +62,11 @@ void end()
     if (!s_initialized) {
         return;  // 初期化されていない
     }
+
+    // 逆順で終了処理
+    rtos::end();
+    framework::end();
+    platform::end();
 
     // 終了処理
     info("FlexHAL terminated");

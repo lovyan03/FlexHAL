@@ -90,6 +90,16 @@ public:
  * @param core_id 実行コアID（-1は自動選択）
  * @return std::shared_ptr<ITask> 作成したタスク
  */
+/**
+ * @brief タスクを作成
+ *
+ * @param name タスク名
+ * @param function タスク関数
+ * @param stack_size スタックサイズ（バイト）
+ * @param priority タスク優先度
+ * @param core_id 実行コアID（-1は自動選択）
+ * @return std::shared_ptr<ITask> 作成したタスク
+ */
 std::shared_ptr<ITask> createTask(const std::string& name, std::function<void()> function, size_t stack_size = 4096,
                                   TaskPriority priority = TaskPriority::Normal, int core_id = -1);
 
