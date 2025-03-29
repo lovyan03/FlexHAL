@@ -1,5 +1,5 @@
 /**
- * @file factory.cpp
+ * @file factory.inl
  * @brief FlexHAL - ESP32向けファクトリ実装
  * @version 0.1.0
  * @date 2025-03-28
