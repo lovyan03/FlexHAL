@@ -1,7 +1,10 @@
 # FlexHAL
 
+> **重要なお知らせ**: このリポジトリは**Windsurf AIを使用したライブラリ開発の実験的プロジェクト**です。現時点では一般利用を推奨しておらず、APIや機能は予告なく変更される可能性があります。また、現在はIssueやプルリクエストを受け付けておりません。
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Arduino Library](https://img.shields.io/badge/Arduino-Library-blue)](https://www.arduino.cc/reference/en/libraries/)
+[![Experimental](https://img.shields.io/badge/Status-Experimental-red)]()
 
 FlexHALは柔軟なハードウェア抽象化レイヤー（HAL）ライブラリです。ESP32やRP2040などのマイコン向けの開発を効率化し、さらにSDLを使用してデスクトップ環境でのエミュレーションも可能にします。
 
@@ -14,12 +17,12 @@ FlexHALは柔軟なハードウェア抽象化レイヤー（HAL）ライブラ�
 
 ## 必要な環境 🛠
 
-- C++17対応コンパイラ
+- C++11以上に対応したコンパイラ（C++11の機能を使用）
 - CMake 3.12以上
 - 各プラットフォームに応じた開発環境:
-  - ESP32: ESP-IDF
-  - RP2040: Pico SDK
-  - SDL: SDL2ライブラリ
+  - ESP32: ESP-IDF または Arduino ESP32
+  - RP2040: Pico SDK または Arduino RP2040
+  - SDL: SDL2ライブラリ（デスクトップシミュレーション用）
 
 ## ビルド方法 🔨
 
@@ -63,6 +66,88 @@ void loop() {
   delay(500);
   GPIO::getInstance().digitalWrite(2, GPIO::PinState::LOW);
   delay(500);
+}
+```
+
+### ロガーの使用例
+
+```cpp
+#include <FlexHAL.hpp>
+
+using namespace flexhal;
+
+void setup() {
+  // ライブラリの初期化（ロガーも自動的に初期化されます）
+  init();
+  
+  // 各レベルのログ出力
+  debug("Debugレベルのログメッセージ");
+  info("Infoレベルのログメッセージ");
+  warning("Warningレベルのログメッセージ");
+  error("Errorレベルのログメッセージ");
+  fatal("Fatalレベルのログメッセージ");
+  
+  // フォーマット付きログ出力の例
+  char buffer[100];
+  snprintf(buffer, sizeof(buffer), "バージョン: %d.%d.%d", 1, 2, 3);
+  info(buffer);
+}
+
+void loop() {
+  // 定期的なログ出力
+  static unsigned long lastLog = 0;
+  unsigned long now = millis();
+  
+  if (now - lastLog > 5000) {  // 5秒ごとにログ出力
+    lastLog = now;
+    info("定期実行中...");
+  }
+}
+```
+
+#### カスタムロガーの実装例
+
+```cpp
+#include <FlexHAL.hpp>
+
+using namespace flexhal;
+
+// 独自ロガーの実装
+ class MyCustomLogger : public ILogger {
+public:
+  void log(LogLevel level, const char* message) override {
+    // 独自のログ出力処理を実装
+    // 例: SDカードや外部デバイスにログを保存するなど
+    Serial.print("[カスタムロガー] ");
+    
+    switch (level) {
+      case LogLevel::Debug:   Serial.print("DEBUG: "); break;
+      case LogLevel::Info:    Serial.print("INFO: "); break;
+      case LogLevel::Warning: Serial.print("WARN: "); break;
+      case LogLevel::Error:   Serial.print("ERROR: "); break;
+      case LogLevel::Fatal:   Serial.print("FATAL: "); break;
+    }
+    
+    Serial.println(message);
+  }
+};
+
+void setup() {
+  Serial.begin(115200);
+  
+  // ライブラリの初期化
+  init();
+  
+  // カスタムロガーを設定
+  static MyCustomLogger customLogger;
+  setLogger(&customLogger);
+  
+  // ログ出力テスト
+  info("カスタムロガーを使用しています");
+}
+
+void loop() {
+  // メイン処理
 }
 ```
 

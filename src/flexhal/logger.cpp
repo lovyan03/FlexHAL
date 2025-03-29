@@ -2,32 +2,99 @@
  * @file logger.cpp
  * @brief FlexHAL - ロガー実装
  * @version 0.1.0
- * @date 2025-03-28
+ * @date 2025-03-29
  *
  * @copyright Copyright (c) 2025
  *
  */
 
 #include "logger.hpp"
-
-// 環境に応じたロガー実装をインクルード
-#if defined(ARDUINO) || defined(ESP_PLATFORM) || defined(ESP32) || defined(ESP8266)
-#include "../../impl/frameworks/arduino/logger.inl"
-#else
-#include "../../impl/platforms/desktop/logger.inl"
-#endif
+#include <iostream>
 
 namespace flexhal {
 
-// デフォルトロガーのインスタンス
-#if defined(ARDUINO) || defined(ESP_PLATFORM) || defined(ESP32) || defined(ESP8266)
-static impl::arduino::Logger s_default_logger;
-#else
-static impl::desktop::Logger s_default_logger;
-#endif
+// デフォルトロガーの前方宣言
+class DefaultLogger;
 
 // 現在のロガー
-static ILogger* s_current_logger = &s_default_logger;
+static ILogger* s_current_logger = NULL;
+
+// デフォルトロガーの実装
+class DefaultLogger : public ILogger {
+public:
+    DefaultLogger() : min_level_(LogLevel::Debug), thread_safe_(true) {}
+
+    void log(LogLevel level, const char* message) {
+        // 最小ログレベルより低いログはスキップ
+        if ((int)level < (int)min_level_) {
+            return;
+        }
+
+        // レベルに応じた出力先とプレフィックスを選択
+        const char* prefix = "";
+        std::ostream* out = &std::cout;
+        
+        if (level == LogLevel::Debug) {
+            prefix = "[DEBUG] ";
+        } else if (level == LogLevel::Info) {
+            prefix = "[INFO] ";
+        } else if (level == LogLevel::Warning) {
+            prefix = "[WARN] ";
+        } else if (level == LogLevel::Error) {
+            prefix = "[ERROR] ";
+            out = &std::cerr;
+        } else if (level == LogLevel::Fatal) {
+            prefix = "[FATAL] ";
+            out = &std::cerr;
+        }
+
+        // ログ出力
+        *out << prefix << message << std::endl;
+    }
+
+    void debug(const char* message) {
+        log(LogLevel::Debug, message);
+    }
+
+    void info(const char* message) {
+        log(LogLevel::Info, message);
+    }
+
+    void warning(const char* message) {
+        log(LogLevel::Warning, message);
+    }
+
+    void error(const char* message) {
+        log(LogLevel::Error, message);
+    }
+
+    void fatal(const char* message) {
+        log(LogLevel::Fatal, message);
+    }
+
+    void setThreadSafe(bool enable) {
+        thread_safe_ = enable;
+    }
+
+    void setMinLogLevel(LogLevel level) {
+        min_level_ = level;
+    }
+
+private:
+    LogLevel min_level_;
+    bool thread_safe_;
+};
+
+// デフォルトロガーのインスタンス
+static DefaultLogger s_default_logger;
+
+// デフォルトロガーの初期化
+void initDefaultLogger() {
+    // 初期化がまだならデフォルトロガーを設定
+    if (s_current_logger == NULL) {
+        s_current_logger = &s_default_logger;
+    }
+}
 
 // デフォルトロガーを取得
 ILogger* getLogger() {
@@ -45,23 +112,33 @@ void setLogger(ILogger* logger) {
 
 // グローバルログ関数
 void debug(const char* message) {
-    s_current_logger->debug(message);
+    if (s_current_logger) {
+        s_current_logger->debug(message);
+    }
 }
 
 void info(const char* message) {
-    s_current_logger->info(message);
+    if (s_current_logger) {
+        s_current_logger->info(message);
+    }
 }
 
 void warning(const char* message) {
-    s_current_logger->warning(message);
+    if (s_current_logger) {
+        s_current_logger->warning(message);
+    }
 }
 
 void error(const char* message) {
-    s_current_logger->error(message);
+    if (s_current_logger) {
+        s_current_logger->error(message);
+    }
 }
 
 void fatal(const char* message) {
-    s_current_logger->fatal(message);
+    if (s_current_logger) {
+        s_current_logger->fatal(message);
+    }
 }
 
 } // namespace flexhal

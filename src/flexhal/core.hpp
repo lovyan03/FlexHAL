@@ -21,10 +21,12 @@ namespace flexhal {
  * @brief FlexHALライブラリのバージョン情報
  */
 struct Version {
-    static constexpr int major          = FLEXHAL_VERSION_MAJOR;
-    static constexpr int minor          = FLEXHAL_VERSION_MINOR;
-    static constexpr int patch          = FLEXHAL_VERSION_PATCH;
-    static constexpr const char* string = FLEXHAL_VERSION_STRING;
+    enum {
+        major = FLEXHAL_VERSION_MAJOR,
+        minor = FLEXHAL_VERSION_MINOR,
+        patch = FLEXHAL_VERSION_PATCH
+    };
+    static const char* getString() { return FLEXHAL_VERSION_STRING; }
 };
 
 /**

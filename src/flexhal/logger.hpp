@@ -2,15 +2,13 @@
  * @file logger.hpp
  * @brief FlexHAL - ロガーインターフェース
  * @version 0.1.0
- * @date 2025-03-28
+ * @date 2025-03-29
  *
  * @copyright Copyright (c) 2025
  *
  */
 
 #pragma once
-
-#include <cstdint>
 
 namespace flexhal {
 
@@ -43,31 +41,31 @@ public:
      * @brief デバッグレベルのログを出力する
      * @param message メッセージ
      */
-    void debug(const char* message) { log(LogLevel::Debug, message); }
+    virtual void debug(const char* message) { log(LogLevel::Debug, message); }
     
     /**
      * @brief 情報レベルのログを出力する
      * @param message メッセージ
      */
-    void info(const char* message) { log(LogLevel::Info, message); }
+    virtual void info(const char* message) { log(LogLevel::Info, message); }
     
     /**
      * @brief 警告レベルのログを出力する
      * @param message メッセージ
      */
-    void warning(const char* message) { log(LogLevel::Warning, message); }
+    virtual void warning(const char* message) { log(LogLevel::Warning, message); }
     
     /**
      * @brief エラーレベルのログを出力する
      * @param message メッセージ
      */
-    void error(const char* message) { log(LogLevel::Error, message); }
+    virtual void error(const char* message) { log(LogLevel::Error, message); }
     
     /**
      * @brief 致命的エラーレベルのログを出力する
      * @param message メッセージ
      */
-    void fatal(const char* message) { log(LogLevel::Fatal, message); }
+    virtual void fatal(const char* message) { log(LogLevel::Fatal, message); }
     
     /**
      * @brief スレッドセーフモードを設定する
@@ -81,6 +79,12 @@ public:
      */
     virtual void setMinLogLevel(LogLevel level) = 0;
 };
+
+/**
+ * @brief デフォルトロガーを初期化する
+ * @note この関数は通常、init()関数から呼び出される
+ */
+void initDefaultLogger();
 
 /**
  * @brief デフォルトロガーを取得する
