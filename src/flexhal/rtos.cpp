@@ -41,5 +41,5 @@ void end()
 #endif
 }
 
-} // namespace rtos
-} // namespace flexhal
+}  // namespace rtos
+}  // namespace flexhal

@@ -43,5 +43,5 @@ void end()
 #endif
 }
 
-} // namespace platform
-} // namespace flexhal
+}  // namespace platform
+}  // namespace flexhal

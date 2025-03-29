@@ -19,74 +19,74 @@ namespace flexhal {
 
 // 各レイヤーの名前空間定義
 namespace platform {
-    /**
-     * @brief プラットフォームレイヤーの初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool init();
+/**
+ * @brief プラットフォームレイヤーの初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool init();
 
-    /**
-     * @brief プラットフォームレイヤーの終了処理
-     */
-    void end();
+/**
+ * @brief プラットフォームレイヤーの終了処理
+ */
+void end();
 
-    namespace esp32 {
-        /**
-         * @brief ESP32プラットフォーム固有の初期化
-         * @return true 初期化成功
-         * @return false 初期化失敗
-         */
-        bool initImpl();
+namespace esp32 {
+/**
+ * @brief ESP32プラットフォーム固有の初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool initImpl();
 
-        /**
-         * @brief ESP32プラットフォーム固有の終了処理
-         */
-        void endImpl();
-    }
+/**
+ * @brief ESP32プラットフォーム固有の終了処理
+ */
+void endImpl();
+}  // namespace esp32
 
-    namespace desktop {
-        /**
-         * @brief デスクトッププラットフォーム固有の初期化
-         * @return true 初期化成功
-         * @return false 初期化失敗
-         */
-        bool initImpl();
+namespace desktop {
+/**
+ * @brief デスクトッププラットフォーム固有の初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool initImpl();
 
-        /**
-         * @brief デスクトッププラットフォーム固有の終了処理
-         */
-        void endImpl();
-    }
-}
+/**
+ * @brief デスクトッププラットフォーム固有の終了処理
+ */
+void endImpl();
+}  // namespace desktop
+}  // namespace platform
 
 namespace framework {
-    /**
-     * @brief フレームワークレイヤーの初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool init();
+/**
+ * @brief フレームワークレイヤーの初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool init();
 
-    /**
-     * @brief フレームワークレイヤーの終了処理
-     */
-    void end();
-}
+/**
+ * @brief フレームワークレイヤーの終了処理
+ */
+void end();
+}  // namespace framework
 
 namespace rtos {
-    /**
-     * @brief RTOSレイヤーの初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool init();
+/**
+ * @brief RTOSレイヤーの初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool init();
 
-    /**
-     * @brief RTOSレイヤーの終了処理
-     */
-    void end();
-}
+/**
+ * @brief RTOSレイヤーの終了処理
+ */
+void end();
+}  // namespace rtos
 
 /**
  * @brief FlexHALライブラリのバージョン情報

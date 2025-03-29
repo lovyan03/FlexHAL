@@ -34,34 +34,34 @@ void end();
 bool update();
 
 namespace esp32 {
-    /**
-     * @brief ESP32プラットフォーム固有の初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool initImpl();
+/**
+ * @brief ESP32プラットフォーム固有の初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool initImpl();
 
-    /**
-     * @brief ESP32プラットフォーム固有の終了処理
-     */
-    void endImpl();
-}
+/**
+ * @brief ESP32プラットフォーム固有の終了処理
+ */
+void endImpl();
+}  // namespace esp32
 
 namespace desktop {
-    /**
-     * @brief デスクトッププラットフォーム固有の初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool initImpl();
+/**
+ * @brief デスクトッププラットフォーム固有の初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool initImpl();
 
-    /**
-     * @brief デスクトッププラットフォーム固有の終了処理
-     */
-    void endImpl();
-}
+/**
+ * @brief デスクトッププラットフォーム固有の終了処理
+ */
+void endImpl();
+}  // namespace desktop
 
-} // namespace platform
-} // namespace flexhal
+}  // namespace platform
+}  // namespace flexhal
 
-#endif // FLEXHAL_PLATFORM_HPP
+#endif  // FLEXHAL_PLATFORM_HPP

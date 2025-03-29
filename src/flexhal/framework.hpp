@@ -27,34 +27,34 @@ bool init();
 void end();
 
 namespace arduino {
-    /**
-     * @brief Arduinoフレームワーク固有の初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool initImpl();
+/**
+ * @brief Arduinoフレームワーク固有の初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool initImpl();
 
-    /**
-     * @brief Arduinoフレームワーク固有の終了処理
-     */
-    void endImpl();
-}
+/**
+ * @brief Arduinoフレームワーク固有の終了処理
+ */
+void endImpl();
+}  // namespace arduino
 
 namespace espidf {
-    /**
-     * @brief ESP-IDFフレームワーク固有の初期化
-     * @return true 初期化成功
-     * @return false 初期化失敗
-     */
-    bool initImpl();
+/**
+ * @brief ESP-IDFフレームワーク固有の初期化
+ * @return true 初期化成功
+ * @return false 初期化失敗
+ */
+bool initImpl();
 
-    /**
-     * @brief ESP-IDFフレームワーク固有の終了処理
-     */
-    void endImpl();
-}
+/**
+ * @brief ESP-IDFフレームワーク固有の終了処理
+ */
+void endImpl();
+}  // namespace espidf
 
-} // namespace framework
-} // namespace flexhal
+}  // namespace framework
+}  // namespace flexhal
 
-#endif // FLEXHAL_FRAMEWORK_HPP
+#endif  // FLEXHAL_FRAMEWORK_HPP

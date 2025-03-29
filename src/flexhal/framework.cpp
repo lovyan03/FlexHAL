@@ -41,5 +41,5 @@ void end()
 #endif
 }
 
-} // namespace framework
-} // namespace flexhal
+}  // namespace framework
+}  // namespace flexhal
