@@ -34,3 +34,4 @@
 /build
 **/.pio
 **/build
+/.old

@@ -1,36 +1,102 @@
 /**
  * @file FlexHAL.hpp
- * @brief FlexHAL - 柔軟なハードウェア抽象化レイヤー (C++版)
+ * @brief FlexHAL (Flexible Hardware Abstraction Layer) main C++ header
+ * @author lovyan03
+ * @date 2025/03/29
  * @version 0.1.0
- * @date 2025-03-28
- *
- * @copyright Copyright (c) 2025
- *
+ * 
+ * @copyright Copyright (c) 2025 lovyan03
+ * 
+ * @details
+ * This is the main C++ header file for the FlexHAL library.
+ * It provides a flexible hardware abstraction layer for multiple platforms.
  */
 
-#ifndef FLEXHAL_HPP
-#define FLEXHAL_HPP
+#pragma once
 
-// プラットフォーム検出
-#include "../impl/internal/platform_detect.h"
+// Include standard C++ headers
+#include <cstdint>
+#include <memory>
+#include <functional>
 
-// 各機能のヘッダファイルをインクルード
-#include "flexhal/core.hpp"    // コア機能
-#include "flexhal/gpio.hpp"    // GPIO機能
-#include "flexhal/spi.hpp"     // SPI機能
-#include "flexhal/i2c.hpp"     // I2C機能
-#include "flexhal/rtos.hpp"    // RTOS機能
-#include "flexhal/logger.hpp"  // ロガー機能
+// Include platform detection
+#include "flexhal/platform_detect.h"
 
-// 以下は後方互換性のためにグローバル名前空間にエクスポート
-// 新しいコードでは各機能のヘッダファイルを直接インクルードすることを推奨
+// Forward declarations
+namespace flexhal {
+  namespace gpio {
+    class GPIO;
+    class Factory;
+  }
+  
+  namespace time {
+    class Time;
+  }
+  
+  namespace logger {
+    class Logger;
+  }
+}
 
-// バージョン情報をグローバル名前空間にエクスポート
-using flexhal::Version;
+/**
+ * @brief Main FlexHAL class that provides access to all HAL features
+ */
+class FlexHAL {
+public:
+  /**
+   * @brief Get the singleton instance of FlexHAL
+   * @return FlexHAL& Reference to the singleton instance
+   */
+  static FlexHAL& getInstance();
+  
+  /**
+   * @brief Initialize the HAL
+   * @return true if initialization was successful
+   */
+  bool begin();
+  
+  /**
+   * @brief Shutdown the HAL
+   */
+  void end();
+  
+  /**
+   * @brief Get the GPIO interface
+   * @return std::shared_ptr<flexhal::gpio::GPIO> Shared pointer to the GPIO interface
+   */
+  std::shared_ptr<flexhal::gpio::GPIO> gpio();
+  
+  /**
+   * @brief Get the Time interface
+   * @return std::shared_ptr<flexhal::time::Time> Shared pointer to the Time interface
+   */
+  std::shared_ptr<flexhal::time::Time> time();
+  
+  /**
+   * @brief Get the Logger interface
+   * @return std::shared_ptr<flexhal::logger::Logger> Shared pointer to the Logger interface
+   */
+  std::shared_ptr<flexhal::logger::Logger> logger();
+  
+private:
+  // Private constructor to enforce singleton pattern
+  FlexHAL();
+  
+  // Prevent copy and assignment
+  FlexHAL(const FlexHAL&) = delete;
+  FlexHAL& operator=(const FlexHAL&) = delete;
+  
+  // Implementation details
+  class Impl;
+  std::unique_ptr<Impl> _impl;
+};
 
-// 初期化/終了処理関数をグローバル名前空間にエクスポート
-// Arduinoとの名前空間の衝突を避けるためにコメントアウト
-// using flexhal::end;
-// using flexhal::init;
+/**
+ * @brief Global instance of FlexHAL for easy access
+ */
+extern FlexHAL hal;
 
-#endif  // FLEXHAL_HPP
+// Include public API headers
+#include "flexhal/gpio/_include.h"
+#include "flexhal/time/_include.h"
+#include "flexhal/logger/_include.h"

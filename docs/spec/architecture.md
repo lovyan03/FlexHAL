@@ -1,306 +1,317 @@
-# FlexHAL アーキテクチャ設計書
+# FlexHAL アーキテクチャ設計 🌈
 
-## 1. アーキテクチャ概要
+## 目次
 
-FlexHALは3層構造のアーキテクチャを採用し、ハードウェア依存性を段階的に抽象化します。この設計により、異なるプラットフォームやフレームワーク間での移植性を高め、コードの再利用性を最大化します。
+- [基本コンセプト](#基本コンセプト-)
+- [対象プラットフォーム](#対象プラットフォーム-)
+- [ディレクトリ構造](#ディレクトリ構造-)
+- [名前空間構造](#名前空間構造-)
+- [環境検出の仕組み](#環境検出の仕組み-)
+- [マルチフレームワーク・マルチRTOS対応](#マルチフレームワーク・マルチrtos対応-)
+- [プラットフォームとフレームワークの検出](#プラットフォームとフレームワークの検出-)
+- [将来の拡張予定](#将来の拡張予定-)
+- [実装選択の仕組み](#実装選択の仕組み-)
+- [優先実装機能](#優先実装機能-)
+- [例外処理方針](#例外処理方針-)
+- [ビルド環境](#ビルド環境-)
+- [バージョン管理](#バージョン管理-)
 
-### 1.1 3層構造の基本概念
+## 基本コンセプト ✨
+
+FlexHALは、マルチプラットフォーム対応のハードウェア抽象化レイヤーで、以下の特徴を持ちます：
+
+- **3層構造**: プラットフォーム・フレームワーク・RTOSの明確な分離
+- **複数実装選択**: ファクトリパターンによる実装の選択機能
+- **自動環境検出**: ビルド環境に応じた最適な実装の自動選択
+- **マルチフレームワーク対応**: 複数フレームワークの同時サポート
+- **マルチRTOS対応**: 複数RTOSの同時サポート
+- **C++11ベース**: モダンC++の機能を活用した実装
+- **Arduino IDE最適化**: ビルド時間を短縮する構造設計
+
+## 2. 対象プラットフォーム 🖥️
+
+初期対応予定のプラットフォーム：
+- ESP32
+- デスクトップ環境（SDL2使用）
+
+将来的な対応予定：
+- ESP8266
+- RP2040/RP2350
+- STM32
+- SAMD21/SAMD51
+- SPRESENSE
+- その他の組み込みマイコン
+
+## ディレクトリ構造 📁
 
 ```
-+---------------------------+
-|      アプリケーション      |
-+---------------------------+
-|         FlexHAL API       |
-+===========================+
-| RTOS層 (タスク管理/同期)   |
-+---------------------------+
-| フレームワーク層 (Arduino等)|
-+---------------------------+
-| プラットフォーム層 (ESP32等) |
-+---------------------------+
-|        ハードウェア        |
-+---------------------------+
+FlexHAL/
+├── src/                          # 公開API
+│   ├── FlexHAL.h                 # C++チェック用ラッパー
+│   ├── FlexHAL.hpp               # メインC++ヘッダー
+│   ├── FlexHAL.cpp               # 実装エントリポイント
+│   └── flexhal/                  # 公開APIフォルダ
+│       ├── platform_detect.h     # プラットフォーム検出
+│       ├── gpio/                 # GPIO関連
+│       │   ├── _include.h        # GPIO全体インクルード
+│       │   ├── gpio.h            # GPIO基本インターフェース
+│       │   ├── digital.h         # デジタルIO API
+│       │   └── factory.h         # GPIO実装選択ファクトリ
+│       ├── time/                 # 時間関連
+│       │   ├── _include.h
+│       │   ├── delay.h
+│       │   └── timer.h
+│       ├── logger/               # ロガー関連
+│       │   ├── _include.h
+│       │   └── logger.h
+│       ├── platforms/            # プラットフォーム固有拡張
+│       └── frameworks/           # フレームワーク固有拡張
+├── impl/                         # 内部実装
+│   ├── _include.inl              # 全体インクルード
+│   ├── gpio/                     # GPIO実装
+│   │   ├── _include.inl
+│   │   └── gpio.inl
+│   ├── time/                     # 時間実装
+│   │   ├── _include.inl
+│   │   └── delay.inl
+│   ├── logger/                   # ロガー実装
+│   │   ├── _include.inl
+│   │   └── logger.inl
+│   ├── platforms/                # プラットフォーム別実装
+│   │   ├── _include.inl
+│   │   ├── esp32/
+│   │   │   ├── _include.inl
+│   │   │   ├── gpio.inl
+│   │   │   └── time.inl
+│   │   └── desktop/
+│   │       ├── _include.inl
+│   │       ├── gpio.inl
+│   │       └── time.inl
+│   ├── frameworks/               # フレームワーク別実装
+│   │   ├── _include.inl
+│   │   ├── arduino/
+│   │   │   ├── _include.inl
+│   │   │   └── gpio.inl
+│   │   ├── esp_idf/
+│   │   │   ├── _include.inl
+│   │   │   └── gpio.inl
+│   │   └── sdl/
+│   │       ├── _include.inl
+│   │       └── gpio.inl
+│   └── rtos/                     # RTOS別実装
+│       ├── _include.inl
+│       ├── freertos/
+│       │   ├── _include.inl
+│       │   └── task.inl
+│       └── desktop/
+│           ├── _include.inl
+│           └── task.inl
+├── examples/                     # サンプルコード
+└── docs/                         # ドキュメント
+    └── spec/                     # 仕様書
 ```
 
-1. **プラットフォーム層**：特定のハードウェアアーキテクチャ（ESP32、AVR、ARM等）に依存する実装
-2. **フレームワーク層**：開発フレームワーク（Arduino、ESP-IDF等）に依存する実装
-3. **RTOS層**：リアルタイムOS（FreeRTOS等）に依存する実装
+## 名前空間構造 🏷️
 
-## 2. コアコンポーネント
+フォルダ構造と名前空間構造を一致させます：
 
-### 2.1 インターフェース階層
+- `flexhal` - トップレベル名前空間
+  - `flexhal::gpio` - GPIO関連
+  - `flexhal::time` - 時間関連
+  - `flexhal::logger` - ロガー関連
+  - `flexhal::platform` - プラットフォーム固有実装
+    - `flexhal::platform::esp32` - ESP32実装
+    - `flexhal::platform::desktop` - デスクトップ実装
+  - `flexhal::framework` - フレームワーク固有実装
+    - `flexhal::framework::arduino` - Arduino実装
+    - `flexhal::framework::esp_idf` - ESP-IDF実装
+    - `flexhal::framework::sdl` - SDL実装
+  - `flexhal::rtos` - RTOS固有実装
+    - `flexhal::rtos::freertos` - FreeRTOS実装
+    - `flexhal::rtos::desktop` - デスクトップOS実装
+  - `flexhal::internal` - 内部実装（ユーザーは使用しない）
 
-FlexHALは明確に定義されたインターフェース階層を持ち、各レイヤーの責務を分離します：
+## 環境検出の仕組み 🔍
 
-```
-+------------------+     +------------------+     +------------------+
-|    IDevice       |     |     IBus         |     |   ITransport     |
-+------------------+     +------------------+     +------------------+
-        ^                        ^                        ^
-        |                        |                        |
-+------------------+     +------------------+     +------------------+
-|    IGPIOPin      |     |     ISPIBus      |     |  ISPITransport   |
-+------------------+     +------------------+     +------------------+
-        ^                        ^                        ^
-        |                        |                        |
-+------------------+     +------------------+     +------------------+
-| ArduinoGPIOPin   |     | ArduinoSPIBus    |     | ArduinoSPITransport |
-+------------------+     +------------------+     +------------------+
-```
+`platform_detect.h` で以下の環境を自動検出します：
 
-### 2.2 ファクトリパターン
+### プラットフォーム検出
+- `FLEXHAL_PLATFORM_ESP32` - ESP32
+- `FLEXHAL_PLATFORM_ESP8266` - ESP8266
+- `FLEXHAL_PLATFORM_RP2040` - RP2040/RP2350
+- `FLEXHAL_PLATFORM_STM32` - STM32
 
-各コンポーネントの生成には、ファクトリパターンを採用し、実装の詳細を隠蔽します：
+## 6. マルチフレームワーク・マルチRTOS対応 🌐
+
+FlexHALは、単一の環境で複数のフレームワークやRTOSが同時に存在する状況を想定して設計されています。
+
+### 6.1 複数フレームワークの検出と利用
 
 ```cpp
-// SPIバスの作成例
-std::shared_ptr<ISPIBus> bus = flexhal::spi::createBus(config);
+// 利用可能なすべてのフレームワークを検出
+bool has_arduino = flexhal::hasFramework(Framework::Arduino);
+bool has_espidf = flexhal::hasFramework(Framework::EspIdf);
+bool has_sdl = flexhal::hasFramework(Framework::SDL);
 
-// SPIトランスポートの作成例
-std::shared_ptr<ISPITransport> transport = flexhal::spi::createTransport(bus, device_config);
-```
-
-### 2.3 プラグイン方式
-
-新しいプラットフォームやフレームワークの追加を容易にするため、プラグイン方式を採用します：
-
-```cpp
-// 実装の追加例
-bus->addImplementation(std::make_shared<framework::arduino::spi::Bus>());
-```
-
-## 3. レイヤー別設計
-
-### 3.1 プラットフォーム層
-
-プラットフォーム層は特定のハードウェアアーキテクチャに依存する実装を提供します。
-
-**責務**:
-- ハードウェアレジスタへの直接アクセス
-- プラットフォーム固有の初期化と終了処理
-- デバイス固有の最適化
-
-**命名規則**:
-- ディレクトリ: `impl/platforms/<platform_name>/`
-- 名前空間: `flexhal::platform::<platform_name>`
-
-**実装例**:
-```cpp
-namespace flexhal {
-namespace platform {
-namespace esp32 {
-
-bool initImpl() {
-    // ESP32固有の初期化処理
-    return true;
+// 特定のフレームワーク向けの実装を取得
+if (has_arduino) {
+  // Arduino向けの処理
 }
 
-void endImpl() {
-    // ESP32固有の終了処理
+if (has_espidf) {
+  // ESP-IDF向けの処理
 }
-
-} // namespace esp32
-} // namespace platform
-} // namespace flexhal
 ```
 
-### 3.2 フレームワーク層
-
-フレームワーク層は開発フレームワーク（Arduino、ESP-IDFなど）に依存する実装を提供します。
-
-**責務**:
-- フレームワークAPIの抽象化
-- フレームワーク固有の機能へのアクセス
-- フレームワーク間の互換性確保
-
-**命名規則**:
-- ディレクトリ: `impl/frameworks/<framework_name>/`
-- 名前空間: `flexhal::framework::<framework_name>`
-
-**実装例**:
-```cpp
-namespace flexhal {
-namespace framework {
-namespace arduino {
-namespace spi {
-
-class Bus : public SPIBusImplementation {
-public:
-    bool isAvailable() const override {
-        return true;  // Arduinoフレームワークでは常に利用可能
-    }
-    
-    std::shared_ptr<ISPITransport> createTransport(
-        const SPIBusConfig& bus_config,
-        const SPIDeviceConfig& device_config) override {
-        return std::make_shared<Transport>(bus_config, device_config);
-    }
-};
-
-} // namespace spi
-} // namespace arduino
-} // namespace framework
-} // namespace flexhal
-```
-
-### 3.3 RTOS層
-
-RTOS層はリアルタイムオペレーティングシステムに依存する機能を抽象化します。
-
-**責務**:
-- タスク管理の抽象化
-- 同期プリミティブの提供
-- リソース管理
-
-**命名規則**:
-- ディレクトリ: `impl/rtos/<rtos_name>/`
-- 名前空間: `flexhal::rtos::<rtos_name>`
-
-**実装例**:
-```cpp
-namespace flexhal {
-namespace rtos {
-namespace freertos {
-
-bool initImpl() {
-    // FreeRTOS固有の初期化
-    return true;
-}
-
-void endImpl() {
-    // FreeRTOS固有の終了処理
-}
-
-} // namespace freertos
-} // namespace rtos
-} // namespace flexhal
-```
-
-## 4. ディレクトリ構造
-
-FlexHALのディレクトリ構造は、3層アーキテクチャを反映し、各コンポーネントの責務を明確に分離します：
-
-```
-flexhal/
-├── docs/                     # ドキュメント
-│   └── spec/                 # 仕様書
-├── examples/                 # サンプルコード
-│   ├── arduino/              # Arduino向けサンプル
-│   ├── esp32/                # ESP32向けサンプル
-│   └── native/               # デスクトップ向けサンプル
-├── impl/                     # 内部実装
-│   ├── internal/             # 内部インターフェース定義
-│   ├── platforms/            # プラットフォーム固有実装
-│   │   ├── esp32/            # ESP32プラットフォーム
-│   │   └── desktop/          # デスクトップシミュレーション
-│   ├── frameworks/           # フレームワーク固有実装
-│   │   ├── arduino/          # Arduinoフレームワーク
-│   │   └── espidf/           # ESP-IDFフレームワーク
-│   └── rtos/                 # RTOS固有実装
-│       ├── freertos/         # FreeRTOS実装
-│       └── none/             # RTOSなし環境
-└── src/                      # ユーザーAPI
-    └── flexhal/              # 公開API
-        ├── core.hpp          # コア定義
-        ├── gpio.hpp          # GPIO API
-        ├── spi/              # SPI関連API
-        ├── i2c/              # I2C関連API
-        └── rtos/             # RTOS関連API
-```
-
-## 5. ファイル命名規則
-
-### 5.1 内部インターフェース定義
-- 場所: `impl/internal/`
-- 拡張子: `.h`
-- 命名: 小文字のスネークケース
-- 例: `impl/internal/spi.h`, `impl/internal/gpio.h`
-
-### 5.2 実装ヘッダ
-- 場所: `impl/frameworks/*/`, `impl/platforms/*/`, `impl/rtos/*/`
-- 拡張子: `.hpp`
-- 命名: 小文字のスネークケース
-- 例: `impl/frameworks/arduino/spi/bus.hpp`
-
-### 5.3 実装ソース
-- 場所: 対応するヘッダと同じディレクトリ
-- 拡張子: `.inl`（インライン実装）
-- 命名: 対応するヘッダと同名
-- 例: `impl/frameworks/arduino/spi/bus.inl`
-
-### 5.4 ユーザーAPI
-- 場所: `src/flexhal/`
-- 拡張子: `.hpp`
-- 命名: 小文字のスネークケース
-- 例: `src/flexhal/spi.hpp`, `src/flexhal/gpio.hpp`
-
-## 6. インターフェース設計原則
-
-### 6.1 インターフェース分離の原則
-- 各インターフェースは単一の責務を持つ
-- クライアントは使用しないメソッドに依存しない
-
-### 6.2 依存関係逆転の原則
-- 上位モジュールは下位モジュールに依存しない
-- 両方とも抽象化に依存する
-
-### 6.3 リスコフの置換原則
-- サブクラスはその基底クラスと置換可能である
-
-### 6.4 開放/閉鎖の原則
-- 拡張に対して開かれ、修正に対して閉じている
-
-## 7. エラー処理戦略
-
-FlexHALでは例外を使用せず、明示的なエラーコードと戻り値によるエラー処理を採用します：
+### 6.2 複数RTOSの検出と利用
 
 ```cpp
-enum class Error : int8_t {
-    None           = 0,    // エラーなし
-    Timeout        = -1,   // タイムアウト
-    InvalidParam   = -2,   // 不正なパラメータ
-    NotSupported   = -3,   // サポートされていない機能
-    NotInitialized = -4,   // 初期化されていない
-    NotAvailable   = -5,   // 利用できない
-    BusError       = -6,   // バスエラー
-    DeviceError    = -7,   // デバイスエラー
-    Unknown        = -127  // 不明なエラー
-};
+// 利用可能なすべてのRTOSを検出
+bool has_freertos = flexhal::hasRTOS(RTOS::FreeRTOS);
+bool has_desktop = flexhal::hasRTOS(RTOS::Desktop);
+
+// 特定のRTOS向けの処理
+if (has_freertos) {
+  // FreeRTOS向けの処理
+}
+
+if (has_desktop) {
+  // デスクトップOS向けの処理
+}
 ```
 
-## 8. 初期化フロー
+### 6.3 複数フレームワーク・RTOSの共存
 
-FlexHALの初期化は階層的に行われ、各レイヤーの依存関係を考慮します：
+FlexHALでは、複数のフレームワークやRTOSが同時に初期化され、それぞれの機能を利用できます。例えば：
 
+- ESP32環境でArduinoとESP-IDFの両方のAPIを使用
+- FreeRTOSとデスクトップOSの機能を同時に利用
+
+### 6.4 初期化処理
+
+```cpp
+// ライブラリの初期化
+flexhal::init();
+
+// 内部では以下のような処理が行われます
+void init() {
+  // プラットフォームの初期化
+  platform::init();
+  
+  // 利用可能なすべてのフレームワークを初期化
+  if (hasFramework(Framework::Arduino)) {
+    framework::initArduino();
+  }
+  if (hasFramework(Framework::EspIdf)) {
+    framework::initEspIdf();
+  }
+  if (hasFramework(Framework::SDL)) {
+    framework::initSDL();
+  }
+  
+  // 利用可能なすべてのRTOSを初期化
+  if (hasRTOS(RTOS::FreeRTOS)) {
+    rtos::initFreeRTOS();
+  }
+  if (hasRTOS(RTOS::Desktop)) {
+    rtos::initDesktop();
+  }
+}
 ```
-flexhal::init()
-  ↓
-  ├─ platform::init()  // プラットフォーム層の初期化
-  │    ↓
-  │    └─ platform::<platform_name>::initImpl()
-  │
-  ├─ framework::init() // フレームワーク層の初期化
-  │    ↓
-  │    └─ framework::<framework_name>::initImpl()
-  │
-  └─ rtos::init()      // RTOS層の初期化
-       ↓
-       └─ rtos::<rtos_name>::initImpl()
+
+このような設計により、各フレームワークやRTOSの長所を組み合わせた柔軟なアプリケーション開発が可能になります。
+
+## プラットフォームとフレームワークの検出 🔍
+
+### プラットフォーム検出
+- `FLEXHAL_PLATFORM_ESP32` - ESP32
+- `FLEXHAL_PLATFORM_ESP8266` - ESP8266
+- `FLEXHAL_PLATFORM_RP2040` - RP2040/RP2350
+- `FLEXHAL_PLATFORM_STM32` - STM32
+- `FLEXHAL_PLATFORM_SAMD` - SAMD21/SAMD51
+- `FLEXHAL_PLATFORM_DESKTOP` - デスクトップ環境
+  - `FLEXHAL_PLATFORM_WINDOWS` - Windows
+  - `FLEXHAL_PLATFORM_LINUX` - Linux
+  - `FLEXHAL_PLATFORM_MACOS` - macOS
+
+### フレームワーク検出
+- `FLEXHAL_FRAMEWORK_ARDUINO` - Arduino
+- `FLEXHAL_FRAMEWORK_ESP_IDF` - ESP-IDF
+- `FLEXHAL_FRAMEWORK_SDL` - SDL
+
+### RTOS検出
+- `FLEXHAL_RTOS_FREERTOS` - FreeRTOS
+- `FLEXHAL_RTOS_DESKTOP` - デスクトップOS
+
+## 将来の拡張予定 🔮
+
+### ハードウェア機能
+- PWM出力機能の追加
+- アナログ入出力の統合
+- 割り込み処理のサポート
+- SPI/I2C/UARTなどの周辺機能の実装
+
+### ソフトウェア機能
+- ロギングシステムの強化
+- メモリ管理の最適化
+- パフォーマンスベンチマークツールの実装
+
+### ドキュメント
+- チュートリアルの充実
+- APIリファレンスの自動生成
+- サンプルコードの追加
+
+## 実装選択の仕組み 🛠️
+
+ファクトリパターンを使用して、ユーザーが実装を選択できるようにします：
+
+```cpp
+// 使用例
+#include <flexhal/gpio/factory.h>
+
+void setup() {
+  // デフォルト実装を使用（環境に応じて自動選択）
+  auto gpio = flexhal::gpio::Factory::createDefault();
+  
+  // または明示的に実装を選択
+  auto gpio_arduino = flexhal::gpio::Factory::create(flexhal::gpio::ImplType::Arduino);
+  auto gpio_esp_idf = flexhal::gpio::Factory::create(flexhal::gpio::ImplType::EspIdf);
+  auto gpio_native = flexhal::gpio::Factory::create(flexhal::gpio::ImplType::Native);
+  
+  // どの実装でも同じインターフェースで使える
+  gpio->pinMode(5, OUTPUT);
+  gpio->digitalWrite(5, HIGH);
+}
 ```
 
-## 9. メモリ管理戦略
+## 優先実装機能 🔝
 
-FlexHALではスマートポインタを使用して、リソース管理を安全かつ効率的に行います：
+初期実装で優先する機能：
 
-- `std::shared_ptr`：共有所有権が必要な場合
-- `std::unique_ptr`：排他的所有権が必要な場合
-- 生ポインタ：所有権を持たない参照の場合
+1. **基本機能**
+   - 初期化・終了処理
+   - ロガー（デバッグ出力）
+   - millis/delay（時間関連）
+   - GPIO（入出力制御）
 
-## 10. 今後の拡張性
+2. **プラットフォーム**
+   - ESP32
+   - デスクトップ（SDL2）
 
-FlexHALは将来的に以下の拡張を考慮した設計となっています：
+## 例外処理方針 ⚠️
 
-- 新しいハードウェアプラットフォームの追加
-- 新しいフレームワークの統合
-- 追加のデバイスドライバ（ディスプレイ、センサーなど）
-- 高度なRTOS機能（タスク間通信、リソース管理）
+- ビルドフラグから`-fno-exceptions`を削除し、例外機能自体は有効にする
+- 設計方針として`try-catch`文は一切使用しない
+- `std::function`などの例外を内部で使用するC++標準ライブラリ機能は利用可能
+
+## ビルド環境 🔨
+
+- Arduino IDE + PlatformIO（デュアルサポート）
+- `/src`フォルダをスッキリさせてArduino IDEのビルド時間短縮
+- `.inl`ファイルを活用した実装分離
+
+## バージョン管理 📊
+
+- フォルダ構造ではなくGitのタグとリリースを使用
+- セマンティックバージョニング（MAJOR.MINOR.PATCH）を採用
+- 破壊的変更はMAJORバージョンアップで対応
