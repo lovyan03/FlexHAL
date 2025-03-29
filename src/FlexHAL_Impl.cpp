@@ -8,47 +8,18 @@
  *
  */
 
+/**
+ * @file FlexHAL_Impl.cpp
+ * @brief FlexHAL - 実装ファイルのエントリポイント
+ * @version 0.1.0
+ * @date 2025-03-29
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
 // このファイルはArduino IDEでビルドするために、
 // implフォルダ内の実装ファイルをインクルードするためのものです。
 
-// プラットフォーム検出
-#include "../impl/internal/platform_detect.h"
-
-//=============================================================================
-// プラットフォーム層の実装
-//=============================================================================
-#if defined(FLEXHAL_PLATFORM_ESP32)
-#include "../impl/platforms/esp32/impl_includes.h"
-#elif defined(FLEXHAL_PLATFORM_AVR)
-// AVR向け実装をインクルード
-// #include "../impl/platforms/avr/impl_includes.h"
-#elif defined(FLEXHAL_PLATFORM_RP2040)
-// RP2040向け実装をインクルード
-// #include "../impl/platforms/rp2040/impl_includes.h"
-#elif defined(FLEXHAL_PLATFORM_DESKTOP) || defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || \
-    defined(FLEXHAL_PLATFORM_LINUX)
-#include "../impl/platforms/desktop/impl_includes.h"
-#endif
-
-//=============================================================================
-// フレームワーク層の実装
-//=============================================================================
-#if defined(FLEXHAL_PLATFORM_DESKTOP) || defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || \
-    defined(FLEXHAL_PLATFORM_LINUX)
-#include "../impl/frameworks/sdl/impl_includes.h"
-#endif
-
-//=============================================================================
-// RTOSレイヤー向け実装
-//=============================================================================
-#if defined(FLEXHAL_RTOS_FREERTOS)
-#include "../impl/rtos/freertos/impl_includes.h"
-#elif defined(FLEXHAL_RTOS_ZEPHYR)
-// Zephyr向け実装をインクルード
-// #include "../impl/rtos/zephyr/impl_includes.h"
-#elif defined(FLEXHAL_PLATFORM_DESKTOP) || defined(FLEXHAL_PLATFORM_WINDOWS) || defined(FLEXHAL_PLATFORM_MACOS) || \
-    defined(FLEXHAL_PLATFORM_LINUX)
-#include "../impl/rtos/sdl/impl_includes.h"
-#else
-#include "../impl/rtos/noos/impl_includes.h"
-#endif
+// 新しいエントリポイントをインクルード
+#include "../impl/FlexHAL_Impl.hpp"
