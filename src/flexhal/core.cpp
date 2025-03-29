@@ -17,7 +17,8 @@ namespace flexhal {
 static bool s_initialized = false;
 
 // FlexHALライブラリの初期化
-bool init() {
+bool init()
+{
     if (s_initialized) {
         return true;  // 既に初期化済み
     }
@@ -32,7 +33,8 @@ bool init() {
 }
 
 // FlexHALライブラリの終了処理
-void end() {
+void end()
+{
     if (!s_initialized) {
         return;  // 初期化されていない
     }
@@ -42,4 +44,4 @@ void end() {
     s_initialized = false;
 }
 
-} // namespace flexhal
+}  // namespace flexhal
