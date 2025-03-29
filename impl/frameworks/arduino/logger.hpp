@@ -22,8 +22,8 @@ namespace arduino {
 class Logger : public ILogger {
 private:
     LogLevel min_level_ = LogLevel::Debug;
-    bool thread_safe_ = false;
-    
+    bool thread_safe_   = false;
+
 #if defined(ESP32) || defined(ESP_PLATFORM)
     // ESP32用のミューテックス
     void* mutex_ = nullptr;
@@ -32,12 +32,12 @@ private:
 public:
     Logger();
     ~Logger() override;
-    
+
     void log(LogLevel level, const char* message) override;
     void setThreadSafe(bool enable) override;
     void setMinLogLevel(LogLevel level) override;
 };
 
-} // namespace arduino
-} // namespace impl
-} // namespace flexhal
+}  // namespace arduino
+}  // namespace impl
+}  // namespace flexhal

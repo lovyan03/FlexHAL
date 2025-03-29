@@ -44,7 +44,7 @@ public:
 
     /**
      * @brief ミューテックスをロック
-     * 
+     *
      * @param timeout_ms タイムアウト時間（ミリ秒）、0は永久待機
      * @return true ロック成功
      * @return false ロック失敗
@@ -70,7 +70,7 @@ public:
 
     /**
      * @brief ミューテックスをトライロック（ブロックなし）
-     * 
+     *
      * @return true ロック成功
      * @return false ロック失敗
      */

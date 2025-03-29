@@ -128,7 +128,8 @@ public:
      * @param impl 使用するGPIO実装方法（デフォルトはArduino）
      * @return std::shared_ptr<IPin> ピンインスタンス
      */
-    virtual std::shared_ptr<IPin> getPin(int pin_number, GPIOImplementation impl = GPIOImplementation::Arduino) override;
+    virtual std::shared_ptr<IPin> getPin(int pin_number,
+                                         GPIOImplementation impl = GPIOImplementation::Arduino) override;
 
     /**
      * @brief ピンモード設定

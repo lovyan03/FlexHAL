@@ -23,18 +23,18 @@ namespace desktop {
 class Logger : public ILogger {
 private:
     LogLevel min_level_ = LogLevel::Debug;
-    bool thread_safe_ = true;  // デスクトップ環境ではデフォルトでスレッドセーフ
+    bool thread_safe_   = true;  // デスクトップ環境ではデフォルトでスレッドセーフ
     std::mutex mutex_;
 
 public:
-    Logger() = default;
+    Logger()           = default;
     ~Logger() override = default;
-    
+
     void log(LogLevel level, const char* message) override;
     void setThreadSafe(bool enable) override;
     void setMinLogLevel(LogLevel level) override;
 };
 
-} // namespace desktop
-} // namespace impl
-} // namespace flexhal
+}  // namespace desktop
+}  // namespace impl
+}  // namespace flexhal

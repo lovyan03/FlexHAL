@@ -34,8 +34,8 @@ public:
      * @param priority タスク優先度
      * @param core_id 実行コアID（-1は自動選択）
      */
-    FreeRTOSTask(const std::string& name, std::function<void()> function, size_t stack_size, flexhal::TaskPriority priority,
-                 int core_id)
+    FreeRTOSTask(const std::string& name, std::function<void()> function, size_t stack_size,
+                 flexhal::TaskPriority priority, int core_id)
         : name_(name),
           function_(function),
           stack_size_(stack_size),
@@ -140,7 +140,7 @@ public:
     void setPriority(flexhal::TaskPriority priority) override
     {
         priority_ = priority;
-        
+
         if (running_ && handle_ != nullptr) {
             // FreeRTOSの優先度に変換
             UBaseType_t freertos_priority;
@@ -161,7 +161,7 @@ public:
                     freertos_priority = tskIDLE_PRIORITY + 2;  // デフォルトはNormal
                     break;
             }
-            
+
             // 実行中のタスクの優先度を変更
             vTaskPrioritySet(handle_, freertos_priority);
         }

@@ -26,8 +26,6 @@ enum class GPIOImplementation {
     Native    ///< ネイティブ実装を使用
 };
 
-
-
 /**
  * @brief GPIOポートインターフェース
  */

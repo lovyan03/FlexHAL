@@ -41,7 +41,8 @@ public:
      *
      * @return int ピン番号
      */
-    int getPinNumber() const override {
+    int getPinNumber() const override
+    {
         return pin_number_;
     }
 
@@ -86,6 +87,6 @@ private:
     uint32_t gpio_num_;
 };
 
-} // namespace esp32
-} // namespace platform
-} // namespace flexhal
+}  // namespace esp32
+}  // namespace platform
+}  // namespace flexhal

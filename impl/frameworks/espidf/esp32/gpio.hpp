@@ -13,7 +13,7 @@
 #include "../../../internal/gpio.h"
 #include <driver/gpio.h>
 #include <driver/ledc.h>
-#include <Arduino.h> // ADC機能のためにArduino APIを使用
+#include <Arduino.h>  // ADC機能のためにArduino APIを使用
 
 namespace flexhal {
 namespace framework {
@@ -42,7 +42,8 @@ public:
      *
      * @return int ピン番号
      */
-    int getPinNumber() const override {
+    int getPinNumber() const override
+    {
         return pin_number_;
     }
 
@@ -88,7 +89,7 @@ private:
     int adc_channel_;
 };
 
-} // namespace esp32
-} // namespace espidf
-} // namespace framework
-} // namespace flexhal
+}  // namespace esp32
+}  // namespace espidf
+}  // namespace framework
+}  // namespace flexhal

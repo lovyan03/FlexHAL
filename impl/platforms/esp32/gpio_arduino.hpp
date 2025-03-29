@@ -69,13 +69,13 @@ public:
 protected:
     /**
      * @brief ESP32固有のピンを作成
-     * 
+     *
      * @param pin_number ピン番号
      * @return std::shared_ptr<IPin> ピンインスタンス
      */
     std::shared_ptr<IPin> createPin(int pin_number) override;
 };
 
-} // namespace esp32
-} // namespace platform
-} // namespace flexhal
+}  // namespace esp32
+}  // namespace platform
+}  // namespace flexhal

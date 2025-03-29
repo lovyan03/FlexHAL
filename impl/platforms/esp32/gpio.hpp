@@ -44,10 +44,10 @@ public:
      * @brief デストラクタ
      */
     virtual ~ESP32Pin() = default;
-    
+
     /**
      * @brief 実装方法を切り替える
-     * 
+     *
      * @param impl 切り替える実装方法
      */
     void setImplementation(GPIOImplementation impl);
@@ -57,7 +57,8 @@ public:
      *
      * @return int ピン番号
      */
-    int getPinNumber() const override {
+    int getPinNumber() const override
+    {
         return pin_number_;
     }
 
@@ -100,7 +101,7 @@ private:
     int pin_number_;
     PinMode current_mode_;
     GPIOImplementation impl_;
-    
+
     // 実装クラスへのポインタ
     std::unique_ptr<IPin> pin_impl_;
 };

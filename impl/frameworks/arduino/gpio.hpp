@@ -40,7 +40,8 @@ public:
      *
      * @return int ピン番号
      */
-    int getPinNumber() const override {
+    int getPinNumber() const override
+    {
         return pin_number_;
     }
 
@@ -147,7 +148,7 @@ public:
 protected:
     /**
      * @brief プラットフォーム固有のピンを作成
-     * 
+     *
      * @param pin_number ピン番号
      * @return std::shared_ptr<IPin> ピンインスタンス
      */
@@ -157,6 +158,6 @@ protected:
     std::map<int, std::shared_ptr<IPin>> pins_;
 };
 
-} // namespace arduino
-} // namespace framework
-} // namespace flexhal
+}  // namespace arduino
+}  // namespace framework
+}  // namespace flexhal
